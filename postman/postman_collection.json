@@ -1,0 +1,494 @@
+{
+  "info": {
+    "_postman_id": "b8d4f3c0-7d0c-4cbb-9a0e-8c2f7f5d1111",
+    "name": "Exam Platform API",
+    "description": "Complete API collection for Exam Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "quizId",
+      "value": ""
+    },
+    {
+      "key": "diplomaId",
+      "value": ""
+    },
+    {
+      "key": "topicId",
+      "value": ""
+    },
+    {
+      "key": "attemptId",
+      "value": ""
+    },
+    {
+      "key": "certificateId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/health"
+          }
+        },
+        {
+          "name": "Health Detailed",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/health/detailed"
+          }
+        }
+      ]
+    },
+    {
+      "name": "System",
+      "item": [
+        {
+          "name": "System Info",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/system/info"
+          }
+        }
+      ]
+    },
+    {
+      "name": "API Docs",
+      "item": [
+        {
+          "name": "Swagger Docs",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/api-docs"
+          }
+        },
+        {
+          "name": "Swagger Docs Alt",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/api/docs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/register",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"name\":\"Ahmed\",\n\"email\":\"ahmed@mail.com\",\n\"password\":\"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/auth/verify-email?token=EMAIL_TOKEN"
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.accessToken) {",
+                  "pm.collectionVariables.set('accessToken', jsonData.accessToken);",
+                  "}",
+                  "if (jsonData.refreshToken) {",
+                  "pm.collectionVariables.set('refreshToken', jsonData.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/login",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"email\":\"ahmed@mail.com\",\n\"password\":\"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Google Login",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/auth/google"
+          }
+        },
+        {
+          "name": "Google Callback",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/auth/google/callback"
+          }
+        },
+        {
+          "name": "Facebook Login",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/auth/facebook"
+          }
+        },
+        {
+          "name": "Facebook Callback",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/auth/facebook/callback"
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/forgot-password"
+          }
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/verify-otp"
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/reset-password"
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/refresh-token"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/users/me",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/v1/users/me"
+          }
+        },
+        {
+          "name": "Deactivate Account",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/v1/users/deactivate"
+          }
+        },
+        {
+          "name": "Upload Profile Image",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/uploads/profile-image"
+          }
+        },
+        {
+          "name": "User Statistics",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/users/statistics"
+          }
+        },
+        {
+          "name": "Exam History",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/users/exams?page=1&limit=10"
+          }
+        },
+        {
+          "name": "User Certificates",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/users/certificates?page=1&limit=10"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admins",
+      "item": [
+        {
+          "name": "Create Admin",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/admins"
+          }
+        },
+        {
+          "name": "Update Admin Permissions",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/v1/admins/:adminId/permissions"
+          }
+        },
+        {
+          "name": "Deactivate Admin",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/v1/admins/:adminId/deactivate"
+          }
+        },
+        {
+          "name": "Audit Logs",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/admin/audit-logs?page=1&limit=20"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Diplomas",
+      "item": [
+        {
+          "name": "Create Diploma",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/diplomas"
+          }
+        },
+        {
+          "name": "Get Diplomas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/diplomas?page=1&limit=10"
+          }
+        },
+        {
+          "name": "Get Diploma",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/diplomas/:id"
+          }
+        },
+        {
+          "name": "Update Diploma",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/v1/diplomas/:id"
+          }
+        },
+        {
+          "name": "Upload Diploma Image",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/uploads/diploma-image"
+          }
+        },
+        {
+          "name": "Diploma Quizzes",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/diplomas/:id/quizzes?page=1&limit=10"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Topics",
+      "item": [
+        {
+          "name": "Create Topic",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/topics"
+          }
+        },
+        {
+          "name": "Update Topic",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/v1/topics/:topicId"
+          }
+        },
+        {
+          "name": "Delete Topic",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/v1/topics/:topicId"
+          }
+        },
+        {
+          "name": "Get Diploma Topics",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/diplomas/:id/topics"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Quizzes",
+      "item": [
+        {
+          "name": "Create Quiz",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/quizzes"
+          }
+        },
+        {
+          "name": "Update Quiz",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/v1/quizzes/:quizId"
+          }
+        },
+        {
+          "name": "Delete Quiz",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/v1/quizzes/:quizId"
+          }
+        },
+        {
+          "name": "Upload Quiz Image",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/uploads/quiz-image"
+          }
+        },
+        {
+          "name": "Add Question",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/quizzes/:quizId/questions"
+          }
+        },
+        {
+          "name": "Get Quiz",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/quizzes/:quizId"
+          }
+        },
+        {
+          "name": "Start Quiz",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/quizzes/:quizId/start"
+          }
+        },
+        {
+          "name": "Next Question",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/quizzes/attempts/:attemptId/next"
+          }
+        },
+        {
+          "name": "Save Answer",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/quizzes/attempts/:attemptId/answer"
+          }
+        },
+        {
+          "name": "Submit Exam",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/quizzes/attempts/:attemptId/submit"
+          }
+        },
+        {
+          "name": "Attempt Result",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/quizzes/attempts/:attemptId/result"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Certificates",
+      "item": [
+        {
+          "name": "Get Certificate",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/certificates/:id"
+          }
+        },
+        {
+          "name": "Download Certificate",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/certificates/:id/download"
+          }
+        },
+        {
+          "name": "Verify Certificate",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/certificates/verify/:code"
+          }
+        }
+      ]
+    }
+  ]
+}
