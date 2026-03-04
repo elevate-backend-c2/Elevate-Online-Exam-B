@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './modules/app/app.module';
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { Logger, RequestMethod, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -19,7 +19,9 @@ async function bootstrap() {
     }),
   );
 
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api', {
+    exclude: [{ path: '', method: RequestMethod.ALL }],
+  });
   const config = new DocumentBuilder()
     .setTitle('Exam Platform API')
     .setDescription('The Exam Platform API description')
