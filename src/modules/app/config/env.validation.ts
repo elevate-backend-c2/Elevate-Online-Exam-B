@@ -2,7 +2,7 @@ import Joi from 'joi';
 
 export const envValidationSchema = Joi.object({
   NODE_ENV: Joi.string()
-    .valid('development', 'production', 'test')
+    .valid('development', 'production', 'stagging', 'test')
     .default('development'),
   PORT: Joi.number().default(3000),
   MONGO_URI: Joi.string().required(),
