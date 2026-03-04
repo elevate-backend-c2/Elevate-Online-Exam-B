@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 
 const envFilePath =
   process.env.NODE_ENV === 'production'
@@ -15,7 +16,12 @@ const envFilePath =
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath,
-      load: [],
+    }),
+    MongooseModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get('MONGO_URI'),
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [AppController],
