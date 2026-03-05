@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Certificate of Completion</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f3f4f6;
+      }
+
+      .certificate-wrapper {
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+
+      .certificate {
+        width: 100%;
+        max-width: 900px;
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 40px 60px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+        border: 6px solid #e5e7eb;
+        position: relative;
+      }
+
+      .certificate::before {
+        content: "";
+        position: absolute;
+        inset: 20px;
+        border: 2px dashed #d1d5db;
+        border-radius: 8px;
+        pointer-events: none;
+      }
+
+      .certificate-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .logo-container img {
+        height: 72px;
+        object-fit: contain;
+      }
+
+      .brand-name {
+        text-align: right;
+        font-size: 20px;
+        font-weight: 700;
+        color: #111827;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .certificate-title {
+        text-align: center;
+        margin: 32px 0 16px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .certificate-title h1 {
+        font-size: 32px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #111827;
+      }
+
+      .certificate-subtitle {
+        text-align: center;
+        font-size: 16px;
+        color: #6b7280;
+        margin-bottom: 40px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .recipient-section {
+        text-align: center;
+        margin-bottom: 36px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .label {
+        font-size: 13px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin-bottom: 8px;
+      }
+
+      .recipient-name {
+        font-size: 28px;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .course-section {
+        text-align: center;
+        margin-bottom: 40px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .course-name {
+        font-size: 20px;
+        font-weight: 600;
+        color: #1f2933;
+        margin-top: 4px;
+      }
+
+      .details-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 32px;
+        margin-top: 24px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .details-column {
+        flex: 1;
+      }
+
+      .details-value {
+        font-size: 14px;
+        font-weight: 600;
+        color: #111827;
+        margin-top: 4px;
+      }
+
+      .footer-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-top: 56px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .signature-block {
+        text-align: left;
+      }
+
+      .signature-line {
+        width: 200px;
+        height: 1px;
+        background-color: #d1d5db;
+        margin-bottom: 8px;
+      }
+
+      .signature-label {
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .certificate-id {
+        text-align: right;
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      @media print {
+        body {
+          background: none;
+        }
+        .certificate-wrapper {
+          padding: 0;
+        }
+        .certificate {
+          box-shadow: none;
+          border-width: 4px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="certificate-wrapper">
+      <div class="certificate">
+        <div class="certificate-header">
+          <div class="logo-container">
+            <img
+              src="https://media.licdn.com/dms/image/v2/D560BAQGcEWHAE5rIyw/company-logo_200_200/company-logo_200_200/0/1722617140912/elevatecheg_logo?e=2147483647&amp;v=beta&amp;t=OTjhdl724IrnCBhW89HN2yXdWxwAbtgzw_ffwihJvT4"
+              alt="ElevateCheg Logo"
+            />
+          </div>
+          <div class="brand-name">ElevateCheg</div>
+        </div>
+
+        <div class="certificate-title">
+          <h1>Certificate of Completion</h1>
+        </div>
+
+        <div class="certificate-subtitle">
+          This certificate is proudly presented to
+        </div>
+
+        <div class="recipient-section">
+          <div class="label">Student Name</div>
+          <div class="recipient-name">{{studentName}}</div>
+        </div>
+
+        <div class="course-section">
+          <div class="label">For successfully completing the course</div>
+          <div class="course-name">{{courseName}}</div>
+        </div>
+
+        <div class="details-row">
+          <div class="details-column">
+            <div class="label">Date</div>
+            <div class="details-value">{{date}}</div>
+          </div>
+          <div class="details-column">
+            <div class="label">Certificate ID</div>
+            <div class="details-value">{{certificateId}}</div>
+          </div>
+        </div>
+
+        <div class="footer-row">
+          <div class="signature-block">
+            <div class="signature-line"></div>
+            <div class="signature-label">Authorized Signature</div>
+          </div>
+          <div class="certificate-id">
+            Ref: {{certificateId}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
