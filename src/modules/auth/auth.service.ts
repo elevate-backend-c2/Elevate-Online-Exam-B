@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { registerDto } from './dto/register.dto';
 import { loginDto } from './dto/Login.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -13,12 +14,21 @@ export class AuthService {
     @InjectModel(User.name)
     private userModel: Model<User>,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async register(registerDto: registerDto): Promise<{ token: string }> {
     const { name, email, password } = registerDto;
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const saltRoundsRaw = this.configService.get<string>('BCRYPT_SALT_ROUNDS');
+
+    // we can remove this line
+    if (!saltRoundsRaw) {
+      throw new Error('BCRYPT_SALT_ROUNDS is required in .env file');
+    }
+
+    const saltRounds = parseInt(saltRoundsRaw, 10);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const user = await this.userModel.create({
       name,
