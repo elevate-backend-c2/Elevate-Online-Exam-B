@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateQuizDto } from './dtos/create-quiz.dto';
 import { Topic } from '../topics/schemas/topic.schema';
+import { UpdateQuizDto } from './dtos/update-quiz.dto';
 
 @Injectable()
 export class QuizzesService {
@@ -20,6 +21,14 @@ export class QuizzesService {
             throw new NotFoundException('Topic not found');
         }
         const quiz = await this.quizModel.create(createQuizDto);
+        return quiz;
+    }
+
+    async updateQuiz(id: string, updateQuizDto: UpdateQuizDto): Promise<Quiz> {
+        const quiz = await this.quizModel.findByIdAndUpdate(id, updateQuizDto, { new: true });
+        if (!quiz) {
+            throw new NotFoundException('Quiz not found');
+        }
         return quiz;
     }
 }
