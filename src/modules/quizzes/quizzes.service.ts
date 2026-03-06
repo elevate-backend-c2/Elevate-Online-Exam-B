@@ -31,4 +31,12 @@ export class QuizzesService {
         }
         return quiz;
     }
+
+    async findQuizById(id: string): Promise<Quiz> {
+        const quiz = await this.quizModel.findById(id);
+        if (!quiz) {
+            throw new NotFoundException('Quiz not found');
+        }
+        return quiz;
+    }
 }
