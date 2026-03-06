@@ -231,7 +231,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/auth/google",
+              "raw": "{{baseUrl}}/api/v1/auth/google/login",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -239,7 +239,8 @@
                 "api",
                 "v1",
                 "auth",
-                "google"
+                "google",
+                "login"
               ]
             }
           },
