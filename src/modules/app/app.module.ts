@@ -1,22 +1,29 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from '../auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { envValidationSchema } from './config/env.validation';
+import { AuthModule } from '../auth/auth.module';
+
+const envFilePath =
+  process.env.NODE_ENV === 'production'
+    ? 'config/.env.production'
+    : process.env.NODE_ENV === 'stagging'
+      ? 'config/.env.stagging'
+      : 'config/.env.development';
 
 @Module({
   imports: [
     AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath,
+      validationSchema: envValidationSchema,
     }),
     MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (ConfigService: ConfigService) => ({
-        uri:
-          ConfigService.get<string>('MONGODB_URI') ||
-          'mongodb://localhost:27017/Online-Exam',
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get('MONGO_URI'),
       }),
       inject: [ConfigService],
     }),
