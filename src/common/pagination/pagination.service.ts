@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { Model } from 'mongoose';
+import {
+  PaginatedDto,
+  PaginationMeta,
+} from 'src/common/pagination/dto/paginated-response.dto';
 import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
-import { Paginated } from 'src/common/pagination/interfaces/paginated.interface';
 
 @Injectable()
 export class PaginationService {
@@ -11,7 +14,7 @@ export class PaginationService {
     paginationQuery: PaginationQueryDto,
     queryFilters: object = {},
     request: Request,
-  ): Promise<Paginated<T>> {
+  ): Promise<PaginatedDto<T>> {
     const { page = 1, limit = 10 } = paginationQuery;
     const skip = (page - 1) * limit;
 
@@ -24,27 +27,27 @@ export class PaginationService {
 
     const host = request.get('host');
     const protocol = request.protocol;
-    const fullPath = `${protocol}://${host}${request.originalUrl}`;
+    const fullPath = `${protocol}://${host}${request.path}`;
 
-    return {
-      data,
-      meta: {
-        currentPage: page,
-        itemCount: data.length,
-        itemsPerPage: limit,
-        totalItems,
-        totalPages,
-      },
-      // HATEOAS <Hypermedia as the engine of application state>
-      links: {
-        current: this.buildLink(fullPath, page, limit),
-        first: this.buildLink(fullPath, 1, limit),
-        last: this.buildLink(fullPath, totalPages, limit),
-        next:
-          page < totalPages ? this.buildLink(fullPath, page + 1, limit) : null,
-        previous: page > 1 ? this.buildLink(fullPath, page - 1, limit) : null,
-      },
-    } as Paginated<T>;
+    const response = new PaginatedDto<T>();
+    response.data = data;
+    response.meta = {
+      currentPage: page,
+      itemCount: data.length,
+      itemsPerPage: limit,
+      totalItems,
+      totalPages,
+    };
+    response.links = {
+      current: this.buildLink(fullPath, page, limit),
+      first: this.buildLink(fullPath, 1, limit),
+      last: this.buildLink(fullPath, totalPages, limit),
+      next:
+        page < totalPages ? this.buildLink(fullPath, page + 1, limit) : null,
+      previous: page > 1 ? this.buildLink(fullPath, page - 1, limit) : null,
+    };
+
+    return response;
   }
 
   private buildLink(fullPath: string, page: number, limit: number): string {
