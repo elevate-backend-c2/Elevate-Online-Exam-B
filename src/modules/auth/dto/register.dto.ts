@@ -5,7 +5,12 @@ import {
   IsString,
   Matches,
   MinLength,
+  IsOptional,
+  IsEnum,
+  IsBoolean,
+  IsInt,
 } from 'class-validator';
+import { UserRole } from '../schemas/user.schema';
 
 export class registerDto {
   @IsNotEmpty()
@@ -27,4 +32,32 @@ export class registerDto {
   })
   @ApiProperty({ example: '12345##' })
   readonly password: string;
+
+  @IsEnum(UserRole)
+  @IsOptional()
+  role?: UserRole;
+
+  @IsBoolean()
+  @IsOptional()
+  active?: boolean;
+
+  @IsInt()
+  @IsOptional()
+  age?: number;
+
+  @IsString()
+  @IsOptional()
+  gender?: string;
+
+  @IsString()
+  @IsOptional()
+  avatar?: string;
+
+  @IsString()
+  @IsOptional()
+  phoneNumber?: string;
+
+  @IsString()
+  @IsOptional()
+  address?: string;
 }
