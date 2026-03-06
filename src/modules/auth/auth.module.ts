@@ -4,7 +4,8 @@ import { AuthService } from './auth.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './schemas/user.schema';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { googleOauthConfig } from './config/google-oauth.config';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ConfigService } from '@nestjs/config';
       },
     }),
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    ConfigModule.forFeature(googleOauthConfig),
   ],
   controllers: [AuthController],
   providers: [AuthService],

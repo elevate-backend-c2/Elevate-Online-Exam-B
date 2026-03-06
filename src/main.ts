@@ -28,18 +28,6 @@ async function bootstrap() {
     }),
   );
 
-  // app.setGlobalPrefix('api', {
-  //   exclude: [{ path: '', method: RequestMethod.ALL }],
-  // });
-  // const config = new DocumentBuilder()
-  //   .setTitle('Exam Platform API')
-  //   .setDescription('The Exam Platform API description')
-  //   .setVersion('1.0')
-  //   .build();
-  // const documentFactory = () => SwaggerModule.createDocument(app, config);
-  // SwaggerModule.setup('api/docs', app, documentFactory);
-  // Logger.log(`API docs: /api/docs`);
-
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT', 3000);
   await app.listen(port);
