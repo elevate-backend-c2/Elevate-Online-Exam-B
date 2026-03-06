@@ -6,6 +6,7 @@ import { UserSchema } from './schemas/user.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { googleOauthConfig } from './config/google-oauth.config';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
@@ -24,6 +25,6 @@ import { googleOauthConfig } from './config/google-oauth.config';
     ConfigModule.forFeature(googleOauthConfig),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, GoogleStrategy],
 })
 export class AuthModule {}
