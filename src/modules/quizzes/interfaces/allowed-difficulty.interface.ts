@@ -4,4 +4,4 @@ export interface AllowedQuizDifficultyConfig {
     difficulty: QuizDifficulty;
     points: number;
     numberOfQuestions: number;
-  }
+}
