@@ -1,27 +1,48 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from '../auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { envValidationSchema } from './config/env.validation';
+import { AuthModule } from '../auth/auth.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+
+const envFilePath =
+  process.env.NODE_ENV === 'production'
+    ? 'config/.env.production'
+    : process.env.NODE_ENV === 'stagging'
+      ? 'config/.env.stagging'
+      : 'config/.env.development';
 
 @Module({
   imports: [
     AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath,
+      validationSchema: envValidationSchema,
     }),
     MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (ConfigService: ConfigService) => ({
-        uri:
-          ConfigService.get<string>('MONGODB_URI') ||
-          'mongodb://localhost:27017/Online-Exam',
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get('MONGO_URI'),
       }),
       inject: [ConfigService],
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 3,
+      },
+    ]),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
