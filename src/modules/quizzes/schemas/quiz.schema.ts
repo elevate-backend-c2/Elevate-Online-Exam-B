@@ -30,6 +30,23 @@ export class Quiz {
       },
     ],
     default: [],
+    validate: {
+      validator: (levels: AllowedQuizDifficultyConfig[]) =>
+        Array.isArray(levels) &&
+        levels.every((level) => {
+          if (
+            typeof level?.numberOfQuestions !== 'number' ||
+            typeof level?.points !== 'number'
+          ) {
+            return false;
+          }
+          const minPoints = level.numberOfQuestions;
+          const maxPoints = level.numberOfQuestions * 3;
+          return level.points >= minPoints && level.points <= maxPoints;
+        }),
+      message:
+        'For each difficulty level, points must be between numberOfQuestions and 3 * numberOfQuestions because each question is worth between 1 and 3 points.',
+    },
   })
   allowedQuizDifficulties: AllowedQuizDifficultyConfig[];
 
@@ -39,7 +56,7 @@ export class Quiz {
   @Prop({ required: true })
   durationMinutes: number;
 
-  @Prop({ default: true })
+  @Prop({ default: false })
   isPublished: boolean;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })

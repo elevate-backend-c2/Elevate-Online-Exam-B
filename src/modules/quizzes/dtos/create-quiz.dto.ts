@@ -15,14 +15,6 @@ export class CreateQuizDto {
   })
   description?: string;
 
-  @IsOptional()
-  @IsString()
-  @ApiProperty({
-    required: false,
-    example: 'https://example.com/images/js-quiz.png',
-  })
-  image?: string;
-
   @IsNotEmpty()
   @IsMongoId()
   @ApiProperty({ example: '665f6a3c2b7c4e1a9c123456', description: 'Topic ID' })
@@ -39,6 +31,8 @@ export class CreateQuizDto {
 
   @IsInt()
   @IsPositive()
+  @Min(3)
+  @Max(120)
   @ApiProperty({
     example: 30,
     description: 'Duration of the quiz in minutes',
