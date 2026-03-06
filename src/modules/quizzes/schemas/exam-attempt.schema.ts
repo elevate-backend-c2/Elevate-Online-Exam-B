@@ -1,14 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { ExamAttemptStatus } from '../enums/exam-attempt-status.enum';
 
 export type ExamAttemptDocument = HydratedDocument<ExamAttempt>;
-
-export enum ExamAttemptStatus {
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  PASSED = 'passed',
-  FAILED = 'failed',
-}
 
 @Schema({
   timestamps: true,
