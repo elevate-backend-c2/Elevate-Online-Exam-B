@@ -32,7 +32,7 @@ const envFilePath =
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
-        limit: 3,
+        limit: 10,
       },
     ]),
   ],
