@@ -1,10 +1,1292 @@
 {
   "info": {
-    "_postman_id": "b8d4f3c0-7d0c-4cbb-9a0e-8c2f7f5d1111",
+    "_postman_id": "cd95198f-920f-4f02-a0b1-e52c50dea49b",
     "name": "Exam Platform API",
     "description": "Complete API collection for Exam Platform",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51516321",
+    "_collection_link": "https://go.postman.co/collection/51516321-cd95198f-920f-4f02-a0b1-e52c50dea49b?source=collection_link"
   },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Health Detailed",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/health/detailed",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "health",
+                "detailed"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "System",
+      "item": [
+        {
+          "name": "System Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/system/info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "system",
+                "info"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "API Docs",
+      "item": [
+        {
+          "name": "Swagger Docs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api-docs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "api-docs"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Swagger Docs Alt",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/api/docs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "api",
+                "docs"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"name\":\"Ahmed\",\n\"email\":\"ahmed@mail.com\",\n\"password\":\"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/verify-email?token=EMAIL_TOKEN",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "verify-email"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "EMAIL_TOKEN"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.accessToken) {",
+                  "pm.collectionVariables.set('accessToken', jsonData.accessToken);",
+                  "}",
+                  "if (jsonData.refreshToken) {",
+                  "pm.collectionVariables.set('refreshToken', jsonData.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"email\":\"ahmed@mail.com\",\n\"password\":\"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Google Login",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/google/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "google",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Google Callback",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/google/callback",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "google",
+                "callback"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Facebook Login",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/facebook",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "facebook"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Facebook Callback",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/facebook/callback",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "facebook",
+                "callback"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "forgot-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/verify-otp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "verify-otp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/reset-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "reset-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/refresh-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh-token"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deactivate Account",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/deactivate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "deactivate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Profile Image",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/uploads/profile-image",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "uploads",
+                "profile-image"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/statistics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "statistics"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Exam History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/exams?page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "exams"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Certificates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/certificates?page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "certificates"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admins",
+      "item": [
+        {
+          "name": "Create Admin",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admins",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admins"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Admin Permissions",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admins/:adminId/permissions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admins",
+                ":adminId",
+                "permissions"
+              ],
+              "variable": [
+                {
+                  "key": "adminId"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deactivate Admin",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admins/:adminId/deactivate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admins",
+                ":adminId",
+                "deactivate"
+              ],
+              "variable": [
+                {
+                  "key": "adminId"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Audit Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/audit-logs?page=1&limit=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "audit-logs"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Diplomas",
+      "item": [
+        {
+          "name": "Create Diploma",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/diplomas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "diplomas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Diplomas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/diplomas?page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "diplomas"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Diploma",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/diplomas/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "diplomas",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Diploma",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/diplomas/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "diplomas",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Diploma Image",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/uploads/diploma-image",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "uploads",
+                "diploma-image"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Diploma Quizzes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/diplomas/:id/quizzes?page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "diplomas",
+                ":id",
+                "quizzes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Topics",
+      "item": [
+        {
+          "name": "Create Topic",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/topics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "topics"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Topic",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/topics/:topicId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "topics",
+                ":topicId"
+              ],
+              "variable": [
+                {
+                  "key": "topicId"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Topic",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/topics/:topicId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "topics",
+                ":topicId"
+              ],
+              "variable": [
+                {
+                  "key": "topicId"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Diploma Topics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/diplomas/:id/topics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "diplomas",
+                ":id",
+                "topics"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Quizzes",
+      "item": [
+        {
+          "name": "Create Quiz",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quizzes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "quizzes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Quiz",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quizzes/:quizId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "quizzes",
+                ":quizId"
+              ],
+              "variable": [
+                {
+                  "key": "quizId"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Quiz",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quizzes/:quizId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "quizzes",
+                ":quizId"
+              ],
+              "variable": [
+                {
+                  "key": "quizId"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Quiz Image",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/uploads/quiz-image",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "uploads",
+                "quiz-image"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Question",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quizzes/:quizId/questions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "quizzes",
+                ":quizId",
+                "questions"
+              ],
+              "variable": [
+                {
+                  "key": "quizId"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Quiz",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quizzes/:quizId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "quizzes",
+                ":quizId"
+              ],
+              "variable": [
+                {
+                  "key": "quizId"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Start Quiz",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quizzes/:quizId/start",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "quizzes",
+                ":quizId",
+                "start"
+              ],
+              "variable": [
+                {
+                  "key": "quizId"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Next Question",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quizzes/attempts/:attemptId/next",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "quizzes",
+                "attempts",
+                ":attemptId",
+                "next"
+              ],
+              "variable": [
+                {
+                  "key": "attemptId"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Save Answer",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quizzes/attempts/:attemptId/answer",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "quizzes",
+                "attempts",
+                ":attemptId",
+                "answer"
+              ],
+              "variable": [
+                {
+                  "key": "attemptId"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Exam",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quizzes/attempts/:attemptId/submit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "quizzes",
+                "attempts",
+                ":attemptId",
+                "submit"
+              ],
+              "variable": [
+                {
+                  "key": "attemptId"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Attempt Result",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/quizzes/attempts/:attemptId/result",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "quizzes",
+                "attempts",
+                ":attemptId",
+                "result"
+              ],
+              "variable": [
+                {
+                  "key": "attemptId"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Certificates",
+      "item": [
+        {
+          "name": "Get Certificate",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/certificates/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "certificates",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Download Certificate",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/certificates/:id/download",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "certificates",
+                ":id",
+                "download"
+              ],
+              "variable": [
+                {
+                  "key": "id"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Certificate",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/certificates/verify/:code",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "certificates",
+                "verify",
+                ":code"
+              ],
+              "variable": [
+                {
+                  "key": "code"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
   "variable": [
     {
       "key": "baseUrl",
@@ -37,458 +1319,6 @@
     {
       "key": "certificateId",
       "value": ""
-    }
-  ],
-  "item": [
-    {
-      "name": "Health",
-      "item": [
-        {
-          "name": "Health",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/health"
-          }
-        },
-        {
-          "name": "Health Detailed",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/health/detailed"
-          }
-        }
-      ]
-    },
-    {
-      "name": "System",
-      "item": [
-        {
-          "name": "System Info",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/system/info"
-          }
-        }
-      ]
-    },
-    {
-      "name": "API Docs",
-      "item": [
-        {
-          "name": "Swagger Docs",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/api-docs"
-          }
-        },
-        {
-          "name": "Swagger Docs Alt",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/api/docs"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Auth",
-      "item": [
-        {
-          "name": "Register",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/auth/register",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\"name\":\"Ahmed\",\n\"email\":\"ahmed@mail.com\",\n\"password\":\"password123\"\n}"
-            }
-          }
-        },
-        {
-          "name": "Verify Email",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/auth/verify-email?token=EMAIL_TOKEN"
-          }
-        },
-        {
-          "name": "Login",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "var jsonData = pm.response.json();",
-                  "if (jsonData.accessToken) {",
-                  "pm.collectionVariables.set('accessToken', jsonData.accessToken);",
-                  "}",
-                  "if (jsonData.refreshToken) {",
-                  "pm.collectionVariables.set('refreshToken', jsonData.refreshToken);",
-                  "}"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/auth/login",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\"email\":\"ahmed@mail.com\",\n\"password\":\"password123\"\n}"
-            }
-          }
-        },
-        {
-          "name": "Google Login",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/auth/google"
-          }
-        },
-        {
-          "name": "Google Callback",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/auth/google/callback"
-          }
-        },
-        {
-          "name": "Facebook Login",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/auth/facebook"
-          }
-        },
-        {
-          "name": "Facebook Callback",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/auth/facebook/callback"
-          }
-        },
-        {
-          "name": "Forgot Password",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/auth/forgot-password"
-          }
-        },
-        {
-          "name": "Verify OTP",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/auth/verify-otp"
-          }
-        },
-        {
-          "name": "Reset Password",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/auth/reset-password"
-          }
-        },
-        {
-          "name": "Refresh Token",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/auth/refresh-token"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Users",
-      "item": [
-        {
-          "name": "Get Profile",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/users/me",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accessToken}}"
-              }
-            ]
-          }
-        },
-        {
-          "name": "Update Profile",
-          "request": {
-            "method": "PATCH",
-            "url": "{{baseUrl}}/api/v1/users/me"
-          }
-        },
-        {
-          "name": "Deactivate Account",
-          "request": {
-            "method": "PATCH",
-            "url": "{{baseUrl}}/api/v1/users/deactivate"
-          }
-        },
-        {
-          "name": "Upload Profile Image",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/uploads/profile-image"
-          }
-        },
-        {
-          "name": "User Statistics",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/users/statistics"
-          }
-        },
-        {
-          "name": "Exam History",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/users/exams?page=1&limit=10"
-          }
-        },
-        {
-          "name": "User Certificates",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/users/certificates?page=1&limit=10"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Admins",
-      "item": [
-        {
-          "name": "Create Admin",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/admins"
-          }
-        },
-        {
-          "name": "Update Admin Permissions",
-          "request": {
-            "method": "PATCH",
-            "url": "{{baseUrl}}/api/v1/admins/:adminId/permissions"
-          }
-        },
-        {
-          "name": "Deactivate Admin",
-          "request": {
-            "method": "PATCH",
-            "url": "{{baseUrl}}/api/v1/admins/:adminId/deactivate"
-          }
-        },
-        {
-          "name": "Audit Logs",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/admin/audit-logs?page=1&limit=20"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Diplomas",
-      "item": [
-        {
-          "name": "Create Diploma",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/diplomas"
-          }
-        },
-        {
-          "name": "Get Diplomas",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/diplomas?page=1&limit=10"
-          }
-        },
-        {
-          "name": "Get Diploma",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/diplomas/:id"
-          }
-        },
-        {
-          "name": "Update Diploma",
-          "request": {
-            "method": "PATCH",
-            "url": "{{baseUrl}}/api/v1/diplomas/:id"
-          }
-        },
-        {
-          "name": "Upload Diploma Image",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/uploads/diploma-image"
-          }
-        },
-        {
-          "name": "Diploma Quizzes",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/diplomas/:id/quizzes?page=1&limit=10"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Topics",
-      "item": [
-        {
-          "name": "Create Topic",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/topics"
-          }
-        },
-        {
-          "name": "Update Topic",
-          "request": {
-            "method": "PATCH",
-            "url": "{{baseUrl}}/api/v1/topics/:topicId"
-          }
-        },
-        {
-          "name": "Delete Topic",
-          "request": {
-            "method": "DELETE",
-            "url": "{{baseUrl}}/api/v1/topics/:topicId"
-          }
-        },
-        {
-          "name": "Get Diploma Topics",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/diplomas/:id/topics"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Quizzes",
-      "item": [
-        {
-          "name": "Create Quiz",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/quizzes"
-          }
-        },
-        {
-          "name": "Update Quiz",
-          "request": {
-            "method": "PATCH",
-            "url": "{{baseUrl}}/api/v1/quizzes/:quizId"
-          }
-        },
-        {
-          "name": "Delete Quiz",
-          "request": {
-            "method": "DELETE",
-            "url": "{{baseUrl}}/api/v1/quizzes/:quizId"
-          }
-        },
-        {
-          "name": "Upload Quiz Image",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/uploads/quiz-image"
-          }
-        },
-        {
-          "name": "Add Question",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/quizzes/:quizId/questions"
-          }
-        },
-        {
-          "name": "Get Quiz",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/quizzes/:quizId"
-          }
-        },
-        {
-          "name": "Start Quiz",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/quizzes/:quizId/start"
-          }
-        },
-        {
-          "name": "Next Question",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/quizzes/attempts/:attemptId/next"
-          }
-        },
-        {
-          "name": "Save Answer",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/quizzes/attempts/:attemptId/answer"
-          }
-        },
-        {
-          "name": "Submit Exam",
-          "request": {
-            "method": "POST",
-            "url": "{{baseUrl}}/api/v1/quizzes/attempts/:attemptId/submit"
-          }
-        },
-        {
-          "name": "Attempt Result",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/quizzes/attempts/:attemptId/result"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Certificates",
-      "item": [
-        {
-          "name": "Get Certificate",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/certificates/:id"
-          }
-        },
-        {
-          "name": "Download Certificate",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/certificates/:id/download"
-          }
-        },
-        {
-          "name": "Verify Certificate",
-          "request": {
-            "method": "GET",
-            "url": "{{baseUrl}}/api/v1/certificates/verify/:code"
-          }
-        }
-      ]
     }
   ]
 }
