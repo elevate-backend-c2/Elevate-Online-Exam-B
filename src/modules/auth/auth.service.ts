@@ -83,4 +83,12 @@ export class AuthService {
     const token = this.jwtService.sign({ id: user._id });
     return { token };
   }
+
+  async validateToken(token: string): Promise<any> {
+    try {
+      return this.jwtService.verify(token);
+    } catch {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
+  }
 }
