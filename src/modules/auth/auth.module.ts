@@ -2,11 +2,15 @@ import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserSchema } from './schemas/user.schema';
+import { UserSchema } from '../users/schemas/user.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { googleOauthConfig } from './config/google-oauth.config';
 import { GoogleStrategy } from './strategies/google.strategy';
+import {
+  PasswordReset,
+  PasswordResetSchema,
+} from './schemas/password-reset.schema';
 
 @Module({
   imports: [
@@ -21,7 +25,10 @@ import { GoogleStrategy } from './strategies/google.strategy';
         };
       },
     }),
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: 'User', schema: UserSchema },
+      { name: PasswordReset.name, schema: PasswordResetSchema },
+    ]),
     ConfigModule.forFeature(googleOauthConfig),
   ],
   controllers: [AuthController],
