@@ -1,13 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { QuizDifficulty } from '../enums/quiz-difficulty.enum';
+import { AllowedQuizDifficultyConfig } from '../interfaces/allowed-difficulty.interface';
 
 export type QuizDocument = HydratedDocument<Quiz>;
-
-export enum QuizDifficulty {
-  EASY = 'easy',
-  MEDIUM = 'medium',
-  HARD = 'hard',
-}
 
 @Schema({
   timestamps: true,
@@ -25,17 +21,23 @@ export class Quiz {
   @Prop({ type: Types.ObjectId, ref: 'Topic', required: true })
   topicId: Types.ObjectId;
 
-  @Prop({ enum: QuizDifficulty, default: QuizDifficulty.MEDIUM })
-  difficulty: QuizDifficulty;
+  @Prop({
+    type: [
+      {
+        difficulty: { type: String, enum: QuizDifficulty, required: true },
+        points: { type: Number, required: true },
+        numberOfQuestions: { type: Number, required: true },
+      },
+    ],
+    default: [],
+  })
+  allowedQuizDifficulties: AllowedQuizDifficultyConfig[];
+
+  @Prop({ required: true })
+  passPercentage: number;
 
   @Prop({ required: true })
   durationMinutes: number;
-
-  @Prop({ required: true })
-  totalMarks: number;
-
-  @Prop({ required: true })
-  passMarks: number;
 
   @Prop({ default: true })
   isPublished: boolean;
