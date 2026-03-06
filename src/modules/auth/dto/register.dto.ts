@@ -10,7 +10,7 @@ import {
   IsBoolean,
   IsInt,
 } from 'class-validator';
-import { UserRole } from '../schemas/user.schema';
+import { UserRole } from '../../users/schemas/user.schema';
 
 export class registerDto {
   @IsNotEmpty()
