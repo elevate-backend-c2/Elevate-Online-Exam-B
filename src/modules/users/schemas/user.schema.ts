@@ -20,6 +20,9 @@ export class User {
   @Prop({ enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
+  @Prop({ type: [String], default: [] })
+  permissions: string[];
+
   @Prop({ default: true })
   active: boolean;
 
@@ -37,6 +40,7 @@ export class User {
 
   @Prop()
   address: string;
+
 }
     
 export const UserSchema = SchemaFactory.createForClass(User)

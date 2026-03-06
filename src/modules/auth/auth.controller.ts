@@ -11,7 +11,7 @@ import { AuthService } from './auth.service';
 import { registerDto } from './dto/register.dto';
 import { loginDto } from './dto/Login.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { GoogleAuthGuard } from './guards/google-auth/google-auth.guard';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
 
 @ApiTags('api/v1/auth')
 @Controller('api/v1/auth')
