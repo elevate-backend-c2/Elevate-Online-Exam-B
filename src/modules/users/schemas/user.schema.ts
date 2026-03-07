@@ -1,9 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Types } from "mongoose";
-export enum UserRole {
-  USER = 'user',
-  ADMIN = 'admin',
-}
+import { Role } from "src/modules/auth/enums/role.enum";
+
 @Schema({
   timestamps: true,
 })
@@ -17,8 +15,8 @@ export class User {
   @Prop()
   password: string;
 
-  @Prop({ enum: UserRole, default: UserRole.USER })
-  role: UserRole;
+  @Prop({ enum: Role, default: Role.USER })
+  role: Role;
 
   @Prop({ type: [Types.ObjectId], ref: 'Diploma', default: [] })
   allowedDiplomas: Types.ObjectId[];
