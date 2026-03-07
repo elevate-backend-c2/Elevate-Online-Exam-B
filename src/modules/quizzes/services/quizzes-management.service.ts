@@ -42,4 +42,16 @@ export class QuizzesManagementService {
       throw new NotFoundException('Quiz not found');
     }
   }
+
+  async updateQuizImage(id: string, imagePath: string): Promise<Quiz> {
+    const quiz = await this.quizModel.findByIdAndUpdate(
+      id,
+      { image: imagePath },
+      { new: true },
+    );
+    if (!quiz) {
+      throw new NotFoundException('Quiz not found');
+    }
+    return quiz;
+  }
 }
