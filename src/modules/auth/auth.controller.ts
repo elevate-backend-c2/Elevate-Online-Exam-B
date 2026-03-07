@@ -3,7 +3,9 @@ import { AuthService } from './auth.service';
 import { registerDto } from './dto/register.dto';
 import { loginDto } from './dto/Login.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { Public } from './decorators/public.decorator';
 
+@Public()
 @ApiTags('api/v1/auth')
 @Controller('api/v1/auth')
 export class AuthController {
@@ -14,6 +16,7 @@ export class AuthController {
     return this.authService.register(RegisterDto);
   }
 
+  @Public()
   @Post('/login')
   login(@Body() LoginDto: loginDto): Promise<{ token: string }> {
     return this.authService.login(LoginDto);

@@ -10,7 +10,8 @@ import {
   IsBoolean,
   IsInt,
 } from 'class-validator';
-import { UserRole } from '../../users/schemas/user.schema';
+import { Roles } from '../decorators/roles.decorator';
+import { Role } from '../enums/role.enum';
 
 export class registerDto {
   @IsNotEmpty()
@@ -33,9 +34,9 @@ export class registerDto {
   @ApiProperty({ example: '12345##' })
   readonly password: string;
 
-  @IsEnum(UserRole)
+  @IsEnum(Roles)
   @IsOptional()
-  role?: UserRole;
+  role?: Role;
 
   @IsBoolean()
   @IsOptional()
