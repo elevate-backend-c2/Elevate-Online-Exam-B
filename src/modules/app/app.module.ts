@@ -7,6 +7,7 @@ import { envValidationSchema } from './config/env.validation';
 import { AuthModule } from '../auth/auth.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { DiplomasModule } from 'src/modules/diplomas/diplomas.module';
 
 const envFilePath =
   process.env.NODE_ENV === 'production'
@@ -35,6 +36,7 @@ const envFilePath =
         limit: 10,
       },
     ]),
+    DiplomasModule,
   ],
   controllers: [AppController],
   providers: [
