@@ -20,6 +20,11 @@ export class AuthService {
   async register(registerDto: registerDto): Promise<{ token: string }> {
     const { name, email, password } = registerDto;
 
+    const userExist = await this.userModel.findOne({ email });
+    if (userExist) {
+      throw new UnauthorizedException('Email already exists');
+    }
+
     const saltRoundsRaw = this.configService.get<string>('BCRYPT_SALT_ROUNDS');
 
     // we can remove this line
