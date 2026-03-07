@@ -8,29 +8,46 @@ import { User, UserRole } from '../users/schemas/user.schema';
 import { Model } from 'mongoose';
 import { Diploma } from '../diplomas/schemas/diploma.schema';
 import { CreateAdminDto } from './dtos/create-admin.dto';
+import { CurrentUserType } from './decorators/current-user.decorator';
+import { SuperAdminAuditLog } from './schemas/admins-audit-logs.schema';
 
 @Injectable()
 export class AdminsService {
+  getAuditLogs() {
+    return this.superAdminAuditLogModel.find();
+  }
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Diploma.name) private diplomaModel: Model<Diploma>,
+    @InjectModel(SuperAdminAuditLog.name)
+    private superAdminAuditLogModel: Model<SuperAdminAuditLog>,
   ) {}
-  async createAdmin(dto: CreateAdminDto) {
-    const existingUser = await this.userModel.findOne({ email: dto.email });
+  async createAdmin(dto: CreateAdminDto, superAdmin: CurrentUserType) {
+    const existingAdmin = await this.userModel.findOne({ email: dto.email });
 
-    if (existingUser) {
+    if (existingAdmin) {
       throw new BadRequestException('Email already exists');
     }
-    await this.userModel.create(dto);
+    const newAdmin = await this.userModel.create(dto);
+    await this.superAdminAuditLogModel.create({
+      action: 'CREATE_ADMIN',
+      performedBy: superAdmin.id,
+      targetId: newAdmin._id,
+    });
+
     return {
       status: 'success',
       message: 'Admin created successfully',
     };
   }
-  async updateAdminDiplomas(id: string, allowedDiplomas: string[]) {
-    const user = await this.userModel.findById(id);
+  async updateAdminDiplomas(
+    id: string,
+    allowedDiplomas: string[],
+    superAdmin: CurrentUserType,
+  ) {
+    const admin = await this.userModel.findById(id);
 
-    if (!user) {
+    if (!admin) {
       throw new NotFoundException('User not found');
     }
 
@@ -58,12 +75,19 @@ export class AdminsService {
         },
       },
     );
+
+    await this.superAdminAuditLogModel.create({
+      action: 'UPDATE_ADMIN_PERMISSIONS',
+      performedBy: superAdmin.id,
+      targetId: admin._id,
+    });
+
     return {
       status: 'success',
       message: "Admin's diplomas updated successfully",
     };
   }
-  async deactivateAdmin(adminId: string) {
+  async deactivateAdmin(adminId: string, superAdmin: CurrentUserType) {
     const admin = await this.userModel.findOneAndUpdate(
       { _id: adminId, role: UserRole.ADMIN },
       { active: false },
@@ -75,6 +99,12 @@ export class AdminsService {
         'Admin not found or this id is not belong to admin',
       );
     }
+    await this.superAdminAuditLogModel.create({
+      action: 'DEACTIVATE_ADMIN',
+      performedBy: superAdmin.id,
+      targetId: admin._id,
+    });
+
     return {
       status: 'success',
       message: 'Admin deactivated successfully',

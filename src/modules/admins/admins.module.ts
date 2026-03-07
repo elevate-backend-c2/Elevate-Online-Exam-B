@@ -7,8 +7,10 @@ import { SuperAdminSeedService } from './admins.seed';
 
 @Module({
   imports: [
-    //User module should export the user model and import it here to use in seeding super admin
+    //User module should export the user model and import it here to use it in seeding super admin
     //UserModule,
+    //Diploma module should export the Diploma model and import it here to use it in updating admin permissions
+    //DiplomaModule,
     MongooseModule.forFeature([{ name: Admin.name, schema: AdminSchema }]),
   ],
   controllers: [AdminsController],
