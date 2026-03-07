@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { Model } from 'mongoose';
-import {
-  PaginatedDto,
-  PaginationMeta,
-} from 'src/common/pagination/dto/paginated-response.dto';
+import { PaginatedDto } from 'src/common/pagination/dto/paginated-response.dto';
 import { PaginationQueryDto } from 'src/common/pagination/dto/pagination-query.dto';
 
 @Injectable()
@@ -14,13 +11,14 @@ export class PaginationService {
     paginationQuery: PaginationQueryDto,
     queryFilters: object = {},
     request: Request,
+    sortOptions: any = { createdAt: -1 },
   ): Promise<PaginatedDto<T>> {
     const { page = 1, limit = 10 } = paginationQuery;
     const skip = (page - 1) * limit;
 
     const [totalItems, data] = await Promise.all([
       model.countDocuments(queryFilters).exec(),
-      model.find(queryFilters).skip(skip).limit(limit).exec(),
+      model.find(queryFilters).sort(sortOptions).skip(skip).limit(limit).exec(),
     ]);
 
     const totalPages = Math.ceil(totalItems / limit);
