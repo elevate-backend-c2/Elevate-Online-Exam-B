@@ -4,10 +4,10 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from '../users/schemas/user.schema';
+import { User, UserRole } from '../users/schemas/user.schema';
 import { Model } from 'mongoose';
 import { Diploma } from '../diplomas/schemas/diploma.schema';
-// import { CreateAdminDto } from './dtos/create-admin.dto';
+import { CreateAdminDto } from './dtos/create-admin.dto';
 
 @Injectable()
 export class AdminsService {
@@ -15,7 +15,18 @@ export class AdminsService {
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Diploma.name) private diplomaModel: Model<Diploma>,
   ) {}
-  async createAdmin() {}
+  async createAdmin(dto: CreateAdminDto) {
+    const existingUser = await this.userModel.findOne({ email: dto.email });
+
+    if (existingUser) {
+      throw new BadRequestException('Email already exists');
+    }
+    await this.userModel.create(dto);
+    return {
+      status: 'success',
+      message: 'Admin created successfully',
+    };
+  }
   async updateAdminDiplomas(id: string, allowedDiplomas: string[]) {
     const user = await this.userModel.findById(id);
 
@@ -48,10 +59,25 @@ export class AdminsService {
       },
     );
     return {
+      status: 'success',
       message: "Admin's diplomas updated successfully",
     };
   }
-  deactivateAdmin() {
-    throw new Error('Method not implemented.');
+  async deactivateAdmin(adminId: string) {
+    const admin = await this.userModel.findOneAndUpdate(
+      { _id: adminId, role: UserRole.ADMIN },
+      { active: false },
+      { new: true },
+    );
+
+    if (!admin) {
+      throw new NotFoundException(
+        'Admin not found or this id is not belong to admin',
+      );
+    }
+    return {
+      status: 'success',
+      message: 'Admin deactivated successfully',
+    };
   }
 }

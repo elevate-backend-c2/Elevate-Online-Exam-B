@@ -1,12 +1,13 @@
 import { Body, Controller, Param, Patch, Post } from '@nestjs/common';
 import { AdminsService } from './admins.service';
+import { CreateAdminDto } from './dtos/create-admin.dto';
 
 @Controller('admins')
 export class AdminsController {
   constructor(private readonly adminService: AdminsService) {}
   @Post()
-  createAdmin() {
-    return this.adminService.createAdmin();
+  createAdmin(@Body() dto: CreateAdminDto) {
+    return this.adminService.createAdmin(dto);
   }
 
   @Patch(':adminId/permissions')
@@ -18,7 +19,7 @@ export class AdminsController {
   }
 
   @Patch(':adminId/deactivate')
-  deactivateAdmin() {
-    return this.adminService.deactivateAdmin();
+  deactivateAdmin(@Param('adminId') adminId: string) {
+    return this.adminService.deactivateAdmin(adminId);
   }
 }
