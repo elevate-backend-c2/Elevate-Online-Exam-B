@@ -28,6 +28,9 @@ export class ExamAttempt {
 
   @Prop()
   durationSeconds?: number;
+
+  @Prop({ type: [Types.ObjectId], ref: 'Question', default: [] })
+  questionIds: Types.ObjectId[];
 }
 
 export const ExamAttemptSchema = SchemaFactory.createForClass(ExamAttempt);
