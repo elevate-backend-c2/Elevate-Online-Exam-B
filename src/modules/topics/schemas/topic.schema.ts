@@ -16,15 +16,12 @@ export class Topic {
   @Prop()
   description?: string;
 
-  @Prop()
-  image?: string;
+  @Prop({ type: Types.ObjectId, ref: 'Diploma', required: true })
+  diplomaId: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'Topic', default: null })
   parentTopicId?: Types.ObjectId | null;
 
-  @Prop({ default: true })
-  isPublished: boolean;
 }
 
 export const TopicSchema = SchemaFactory.createForClass(Topic);
-

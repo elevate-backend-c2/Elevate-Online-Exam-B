@@ -7,6 +7,7 @@ import { envValidationSchema } from './config/env.validation';
 import { AuthModule } from '../auth/auth.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { TopicsModule } from '../topics/topics.module';
 
 const envFilePath =
   process.env.NODE_ENV === 'production'
@@ -18,6 +19,7 @@ const envFilePath =
 @Module({
   imports: [
     AuthModule,
+    TopicsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath,
