@@ -26,14 +26,4 @@ export class CreateTopicDto {
     description: 'Diploma ID',
   })
   diplomaId: string;
-
-  @IsOptional()
-  @IsMongoId()
-  @ApiPropertyOptional({
-    example: '665f6a3c2b7c4e1a9c123457',
-    description: 'Parent Topic ID for hierarchy',
-  })
-  parentTopicId?: string;
-
-
 }

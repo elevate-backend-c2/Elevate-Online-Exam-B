@@ -18,10 +18,6 @@ export class Topic {
 
   @Prop({ type: Types.ObjectId, ref: 'Diploma', required: true })
   diplomaId: Types.ObjectId;
-
-  @Prop({ type: Types.ObjectId, ref: 'Topic', default: null })
-  parentTopicId?: Types.ObjectId | null;
-
 }
 
 export const TopicSchema = SchemaFactory.createForClass(Topic);
