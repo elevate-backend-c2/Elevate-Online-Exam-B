@@ -60,34 +60,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const token = this.jwtService.sign({ id: user._id });
+    const token = this.jwtService.sign({ id: user._id , role: user.role});
 
     return { token };
   }
-
-  // async getOrCreateGoogleUser(profile: any) {
-  //   const { email, displayName } = profile;
-  //   let user = await this.userModel.findOne({ email });
-  //   if (user) return user;
-
-  //   const randomPassword = Math.random().toString(36).slice(-12);
-  //   const saltRoundsRaw = this.configService.get<string>('BCRYPT_SALT_ROUNDS');
-  //   const saltRounds = saltRoundsRaw ? parseInt(saltRoundsRaw, 10) : 10;
-  //   const hashedPassword = await bcrypt.hash(randomPassword, saltRounds);
-
-  //   user = await this.userModel.create({
-  //     email,
-  //     name: displayName || email.split('@')[0],
-  //     password: hashedPassword,
-  //   });
-  //   return user;
-  // }
-
-  // async googleRegister(profile: any): Promise<{ token: string }> {
-  //   const user = await this.getOrCreateGoogleUser(profile);
-  //   const token = this.jwtService.sign({ id: user._id });
-  //   return { token };
-  // }
 
   validateToken(token: string): Promise<any> {
     try {

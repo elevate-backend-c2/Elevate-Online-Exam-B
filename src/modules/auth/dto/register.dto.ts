@@ -5,13 +5,7 @@ import {
   IsString,
   Matches,
   MinLength,
-  IsOptional,
-  IsEnum,
-  IsBoolean,
-  IsInt,
 } from 'class-validator';
-import { Roles } from '../decorators/roles.decorator';
-import { Role } from '../enums/role.enum';
 
 export class registerDto {
   @IsNotEmpty()
@@ -33,32 +27,4 @@ export class registerDto {
   })
   @ApiProperty({ example: '12345##' })
   readonly password: string;
-
-  @IsEnum(Roles)
-  @IsOptional()
-  role?: Role;
-
-  @IsBoolean()
-  @IsOptional()
-  active?: boolean;
-
-  @IsInt()
-  @IsOptional()
-  age?: number;
-
-  @IsString()
-  @IsOptional()
-  gender?: string;
-
-  @IsString()
-  @IsOptional()
-  avatar?: string;
-
-  @IsString()
-  @IsOptional()
-  phoneNumber?: string;
-
-  @IsString()
-  @IsOptional()
-  address?: string;
 }

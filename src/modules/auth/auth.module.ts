@@ -11,7 +11,7 @@ import {
 } from './schemas/password-reset.schema';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guards/auth.guard';
-import { RolesGuard } from './guards/roles/roles.guard';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
