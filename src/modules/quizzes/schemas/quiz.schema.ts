@@ -25,6 +25,9 @@ export class Quiz {
   @Prop({ type: Types.ObjectId, ref: 'Topic', required: true })
   topicId: Types.ObjectId;
 
+  @Prop({ type: Types.ObjectId, ref: 'Diploma', required: true })
+  diplomaId: Types.ObjectId;
+
   @Prop({ enum: QuizDifficulty, default: QuizDifficulty.MEDIUM })
   difficulty: QuizDifficulty;
 
@@ -45,4 +48,3 @@ export class Quiz {
 }
 
 export const QuizSchema = SchemaFactory.createForClass(Quiz);
-

@@ -8,9 +8,9 @@ export type DiplomaDocument = HydratedDocument<Diploma>;
 })
 export class Diploma {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  userId: Types.ObjectId;
+  createdBy: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true, trim: true })
   title: string;
 
   @Prop()
@@ -24,4 +24,3 @@ export class Diploma {
 }
 
 export const DiplomaSchema = SchemaFactory.createForClass(Diploma);
-
