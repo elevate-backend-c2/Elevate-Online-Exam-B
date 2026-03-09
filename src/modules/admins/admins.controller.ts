@@ -2,7 +2,9 @@ import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { AdminsService } from './admins.service';
 import { CreateAdminDto } from './dtos/create-admin.dto';
 import { type Request } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('super-admin')
 @Controller('admins')
 export class AdminsController {
   constructor(private readonly adminService: AdminsService) {}
