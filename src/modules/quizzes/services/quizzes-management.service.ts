@@ -5,6 +5,7 @@ import { Topic } from '../../topics/schemas/topic.schema';
 import { CreateQuizDto } from '../dtos/create-quiz.dto';
 import { UpdateQuizDto } from '../dtos/update-quiz.dto';
 import { Quiz } from '../schemas/quiz.schema';
+import { AllowedQuizDifficultyLevelsDto } from '../dtos/allowed-quiz-difficulty-levels.dto';
 
 @Injectable()
 export class QuizzesManagementService {
@@ -41,6 +42,25 @@ export class QuizzesManagementService {
     if (!quiz) {
       throw new NotFoundException('Quiz not found');
     }
+  }
+
+  async updateAllowedDifficulties(
+    id: string,
+    dto: AllowedQuizDifficultyLevelsDto,
+  ): Promise<Quiz> {
+    const quiz = await this.quizModel
+      .findByIdAndUpdate(
+        id,
+        { allowedQuizDifficulties: dto.levels },
+        { new: true, runValidators: true },
+      )
+      .exec();
+
+    if (!quiz) {
+      throw new NotFoundException('Quiz not found');
+    }
+
+    return quiz;
   }
 
   async updateQuizImage(id: string, imagePath: string): Promise<Quiz> {

@@ -55,9 +55,6 @@ export class Quiz {
   @Prop({ type: Types.ObjectId, ref: 'Diploma', required: true })
   diplomaId: Types.ObjectId;
 
-  @Prop({ enum: QuizDifficulty, default: QuizDifficulty.MEDIUM })
-  difficulty: QuizDifficulty;
-
   @Prop({ required: true })
   durationMinutes: number;
 

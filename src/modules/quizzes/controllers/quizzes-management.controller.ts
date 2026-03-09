@@ -15,6 +15,7 @@ import { diskStorage } from 'multer';
 import { Quiz } from '../schemas/quiz.schema';
 import { CreateQuizDto } from '../dtos/create-quiz.dto';
 import { UpdateQuizDto } from '../dtos/update-quiz.dto';
+import { AllowedQuizDifficultyLevelsDto } from '../dtos/allowed-quiz-difficulty-levels.dto';
 import { QuizzesManagementService } from '../services/quizzes-management.service';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { UserRole } from '../../auth/enums/user-role.enum';
@@ -51,6 +52,16 @@ export class QuizzesManagementController {
     @Body() updateQuizDto: UpdateQuizDto,
   ): Promise<Quiz> {
     return this.quizzesManagementService.updateQuiz(id, updateQuizDto);
+  }
+
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  @DiplomaAccess({ source: 'quizParam', key: 'id' })
+  @Patch(':id/difficulties')
+  updateAllowedDifficulties(
+    @Param('id') id: string,
+    @Body() dto: AllowedQuizDifficultyLevelsDto,
+  ): Promise<Quiz> {
+    return this.quizzesManagementService.updateAllowedDifficulties(id, dto);
   }
 
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
