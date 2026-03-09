@@ -1,11 +1,12 @@
 import { Controller, Get, Patch, Body, Req, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
 import type { PaginationDto } from './dto/pagination.dto';
 import type { UpdateProfileDto } from './dto/update-profile.dto';
 import { UsersService } from './users.service';
 
 @ApiTags('api/v1/users')
+@ApiBearerAuth('access-token')
 @Controller('api/v1/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
