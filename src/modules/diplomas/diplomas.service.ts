@@ -127,8 +127,13 @@ export class DiplomasService {
     return diploma;
   }
 
-  async enroll(diplomaId: string) {
-    const studentId = '12345';
+  async enroll(diplomaId: string, request: Request) {
+    const user = (request as any).user;
+    const studentId = user?.id;
+
+    if (!studentId) {
+      throw new BadRequestException('Invalid authenticated user');
+    }
 
     await this.getDiplomaById(diplomaId);
     
@@ -157,7 +162,12 @@ export class DiplomasService {
   }
 
   async getEnrolledDiplomas(dto: GetDiplomasDto, request: Request) {
-    const studentId = '12345';
+    const user = (request as any).user;
+    const studentId = user?.id;
+
+    if (!studentId) {
+      throw new BadRequestException('Invalid authenticated user');
+    }
     const enrollments = await this.enrollmentModel
       .find({ studentId })
       .select('diplomaId')

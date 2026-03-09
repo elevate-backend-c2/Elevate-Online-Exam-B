@@ -21,7 +21,6 @@ export class DiplomasController {
     return this.diplomasService.getDiplomas(dto, request);
   }
 
-  @Public()
   @Get('enrolled')
   getEnrolledDiplomas(@Query() dto: GetDiplomasDto, @Req() request: Request) {
     return this.diplomasService.getEnrolledDiplomas(dto, request);
@@ -33,10 +32,12 @@ export class DiplomasController {
     return this.diplomasService.getDiplomaById(id);
   }
 
-  @Public()
   @Post(':id/enroll')
-  enroll(@Param('id', ParseObjectIdPipe) id: string) {
-    return this.diplomasService.enroll(id);
+  enroll(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Req() request: Request,
+  ) {
+    return this.diplomasService.enroll(id, request);
   }
 
   @Public()
