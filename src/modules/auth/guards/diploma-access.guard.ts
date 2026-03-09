@@ -16,6 +16,7 @@ import {
 } from '../decorators/diploma-access.decorator';
 import { UserRole } from '../enums/user-role.enum';
 import { Quiz } from '../../quizzes/schemas/quiz.schema';
+import { Topic } from '../../topics/schemas/topic.schema';
 
 @Injectable()
 export class DiplomaAccessGuard implements CanActivate {
@@ -23,6 +24,8 @@ export class DiplomaAccessGuard implements CanActivate {
     private readonly reflector: Reflector,
     @InjectModel(Quiz.name)
     private readonly quizModel: Model<Quiz>,
+    @InjectModel(Topic.name)
+    private readonly topicModel: Model<Topic>,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -78,6 +81,21 @@ export class DiplomaAccessGuard implements CanActivate {
       const body = request.body as Record<string, unknown>;
       const raw = body[metadata.key];
       return typeof raw === 'string' ? raw : null;
+    }
+
+    if (metadata.source === 'topicBody') {
+      const body = request.body as Record<string, unknown>;
+      const raw = body[metadata.key];
+      if (typeof raw !== 'string') return null;
+
+      const topic = await this.topicModel
+        .findById(raw)
+        .select('diplomaId')
+        .lean<Pick<Topic, 'diplomaId'>>()
+        .exec();
+      if (!topic?.diplomaId) return null;
+      const diplomaObjectId = topic.diplomaId as unknown as Types.ObjectId;
+      return diplomaObjectId.toHexString();
     }
 
     if (metadata.source === 'quizParam') {

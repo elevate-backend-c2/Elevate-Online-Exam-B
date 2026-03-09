@@ -37,14 +37,14 @@ export class QuizzesManagementController {
   ) {}
 
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
-  @DiplomaAccess({ source: 'body', key: 'diplomaId' })
+  @DiplomaAccess({ source: 'topicBody', key: 'topicId' })
   @Post()
   createQuiz(@Body() createQuizDto: CreateQuizDto): Promise<Quiz> {
     return this.quizzesManagementService.createQuiz(createQuizDto);
   }
 
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
-  @DiplomaAccess({ source: 'body', key: 'diplomaId' })
+  @DiplomaAccess({ source: 'topicBody', key: 'topicId' })
   @Patch(':id')
   updateQuiz(
     @Param('id') id: string,

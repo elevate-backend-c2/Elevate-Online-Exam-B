@@ -1,6 +1,6 @@
 import { SetMetadata } from '@nestjs/common';
 
-export type DiplomaAccessSource = 'param' | 'body' | 'quizParam';
+export type DiplomaAccessSource = 'param' | 'body' | 'quizParam' | 'topicBody';
 
 export interface DiplomaAccessMetadata {
   source: DiplomaAccessSource;
