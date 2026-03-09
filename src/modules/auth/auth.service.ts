@@ -3,22 +3,29 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../users/schemas/user.schema';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
 import { registerDto } from './dto/register.dto';
 import { loginDto } from './dto/Login.dto';
 import { ConfigService } from '@nestjs/config';
+import { AuthUtilsService } from './utils/auth-utils.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name)
     private userModel: Model<User>,
-    private jwtService: JwtService,
     private configService: ConfigService,
+    private authUtilsService: AuthUtilsService,
   ) {}
 
-  async register(registerDto: registerDto): Promise<{ token: string }> {
+  async register(
+    registerDto: registerDto,
+  ): Promise<{ token: string; refreshToken: string }> {
     const { name, email, password } = registerDto;
+
+    const userExist = await this.userModel.findOne({ email });
+    if (userExist) {
+      throw new UnauthorizedException('Email already exists');
+    }
 
     const saltRoundsRaw = this.configService.get<string>('BCRYPT_SALT_ROUNDS');
 
@@ -36,12 +43,18 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    const token = this.jwtService.sign({ id: user._id });
+    const token = this.authUtilsService.createAccessToken(user);
+    const refreshToken = this.authUtilsService.createRefreshToken(user);
 
-    return { token };
+    user.refreshToken = refreshToken;
+    await (user as any).save();
+
+    return { token, refreshToken };
   }
 
-  async login(LoginDto: loginDto): Promise<{ token: string }> {
+  async login(
+    LoginDto: loginDto,
+  ): Promise<{ token: string; refreshToken: string }> {
     const { email, password } = LoginDto;
 
     const user = await this.userModel.findOne({ email });
@@ -55,32 +68,36 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const token = this.jwtService.sign({ id: user._id });
+    const token = this.authUtilsService.createAccessToken(user);
+    const refreshToken = this.authUtilsService.createRefreshToken(user);
 
-    return { token };
+    user.refreshToken = refreshToken;
+    await (user as any).save();
+
+    return { token, refreshToken };
   }
 
-  async getOrCreateGoogleUser(profile: any) {
-    const { email, displayName } = profile;
-    let user = await this.userModel.findOne({ email });
-    if (user) return user;
-
-    const randomPassword = Math.random().toString(36).slice(-12);
-    const saltRoundsRaw = this.configService.get<string>('BCRYPT_SALT_ROUNDS');
-    const saltRounds = saltRoundsRaw ? parseInt(saltRoundsRaw, 10) : 10;
-    const hashedPassword = await bcrypt.hash(randomPassword, saltRounds);
-
-    user = await this.userModel.create({
-      email,
-      name: displayName || email.split('@')[0],
-      password: hashedPassword,
-    });
-    return user;
+  validateToken(token: string): any {
+    return this.authUtilsService.verifyAccessToken(token);
   }
 
-  async googleRegister(profile: any): Promise<{ token: string }> {
-    const user = await this.getOrCreateGoogleUser(profile);
-    const token = this.jwtService.sign({ id: user._id });
-    return { token };
+  async refreshToken(
+    refreshToken: string,
+  ): Promise<{ token: string; refreshToken: string }> {
+    const payload = this.authUtilsService.verifyRefreshToken(refreshToken);
+
+    const user = await this.userModel.findById(payload.id);
+
+    if (!user || !user.refreshToken || user.refreshToken !== refreshToken) {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    const newAccessToken = this.authUtilsService.createAccessToken(user);
+    const newRefreshToken = this.authUtilsService.createRefreshToken(user);
+
+    user.refreshToken = newRefreshToken;
+    await (user as any).save();
+
+    return { token: newAccessToken, refreshToken: newRefreshToken };
   }
 }
