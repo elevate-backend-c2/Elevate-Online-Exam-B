@@ -10,7 +10,11 @@ import { Model } from 'mongoose';
 import { Diploma } from '../diplomas/schemas/diploma.schema';
 import { CreateAdminDto } from './dtos/create-admin.dto';
 import { SuperAdminAuditLog } from './schemas/admins-audit-logs.schema';
-import { AdminSimpleResponse } from './types/admin-responses.type';
+import {
+  AdminListItem,
+  AdminSimpleResponse,
+  PaginatedAdminsResponse,
+} from './types/admin-responses.type';
 
 @Injectable()
 export class AdminsService {
@@ -120,5 +124,75 @@ export class AdminsService {
 
   async getAuditLogs(): Promise<SuperAdminAuditLog[]> {
     return this.superAdminAuditLogModel.find().exec();
+  }
+
+  async getAdmins(
+    page: number,
+    limit: number,
+  ): Promise<PaginatedAdminsResponse> {
+    const skip = (page - 1) * limit;
+
+    const [items, total] = await Promise.all([
+      this.userModel
+        .find({ role: UserRole.ADMIN })
+        .skip(skip)
+        .limit(limit)
+        .select('name email active allowedDiplomas')
+        .lean(),
+      this.userModel.countDocuments({ role: UserRole.ADMIN }),
+    ]);
+
+    const mapped: AdminListItem[] = items.map((u: any) => ({
+      id: String(u._id),
+      name: u.name,
+      email: u.email,
+      active: u.active,
+      allowedDiplomas: (u.allowedDiplomas || []).map((id: any) => String(id)),
+    }));
+
+    return {
+      items: mapped,
+      page,
+      limit,
+      total,
+    };
+  }
+
+  async getAdminsByDiploma(
+    diplomaId: string,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedAdminsResponse> {
+    const skip = (page - 1) * limit;
+
+    const query = {
+      role: UserRole.ADMIN,
+      allowedDiplomas: diplomaId,
+    };
+
+    const [items, total] = await Promise.all([
+      this.userModel
+        .find(query)
+        .skip(skip)
+        .limit(limit)
+        .select('name email active allowedDiplomas')
+        .lean(),
+      this.userModel.countDocuments(query),
+    ]);
+
+    const mapped: AdminListItem[] = items.map((u: any) => ({
+      id: String(u._id),
+      name: u.name,
+      email: u.email,
+      active: u.active,
+      allowedDiplomas: (u.allowedDiplomas || []).map((id: any) => String(id)),
+    }));
+
+    return {
+      items: mapped,
+      page,
+      limit,
+      total,
+    };
   }
 }

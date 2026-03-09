@@ -27,7 +27,7 @@ export class SuperAdminSeedService implements OnApplicationBootstrap {
         this.configService.get<string>('SUPER_ADMIN_PASSWORD') ||
         'superadminpassword';
       const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
-
+      
       await this.userModel.create({
         name:
           this.configService.get<string>('SUPER_ADMIN_NAME') || 'Super Admin',
@@ -38,7 +38,7 @@ export class SuperAdminSeedService implements OnApplicationBootstrap {
         role: UserRole.SUPER_ADMIN,
       });
 
-      console.log('SuperAdmin Created');
+      console.log('SuperAdmin Created with email: ', this.configService.get<string>('SUPER_ADMIN_EMAIL'));
     }
   }
 }
