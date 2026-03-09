@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User } from '../users/schemas/user.schema';
+import { User } from '../../users/schemas/user.schema';
 
 @Injectable()
 export class AuthUtilsService {
@@ -21,8 +21,7 @@ export class AuthUtilsService {
 
   createRefreshToken(user: User): string {
     const refreshExpires =
-      (this.configService.get<string>('REFRESH_JWT_EXPIRES') as string) ||
-      '7d';
+      (this.configService.get<string>('REFRESH_JWT_EXPIRES') as string) || '7d';
 
     return this.jwtService.sign(
       {
@@ -61,4 +60,3 @@ export class AuthUtilsService {
     }
   }
 }
-

@@ -6,15 +6,15 @@ import * as bcrypt from 'bcrypt';
 import { registerDto } from './dto/register.dto';
 import { loginDto } from './dto/Login.dto';
 import { ConfigService } from '@nestjs/config';
-import { AuthUtilsService } from './auth-utils.service';
+import { AuthUtilsService } from './utils/auth-utils.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name)
     private userModel: Model<User>,
-  private configService: ConfigService,
-  private authUtilsService: AuthUtilsService,
+    private configService: ConfigService,
+    private authUtilsService: AuthUtilsService,
   ) {}
 
   async register(
