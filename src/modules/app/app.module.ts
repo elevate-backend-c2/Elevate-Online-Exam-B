@@ -10,6 +10,7 @@ import { UsersModule } from '../users/users.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { DiplomasModule } from 'src/modules/diplomas/diplomas.module';
+import { TopicsModule } from '../topics/topics.module';
 
 const envFilePath =
   process.env.NODE_ENV === 'production'
@@ -23,6 +24,7 @@ const envFilePath =
     AuthModule,
     AdminsModule,
     UsersModule,
+    TopicsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath,
