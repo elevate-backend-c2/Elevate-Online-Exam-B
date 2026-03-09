@@ -19,7 +19,7 @@ export class AuthService {
 
   async register(
     registerDto: registerDto,
-  ): Promise<{ token: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const { name, email, password } = registerDto;
 
     const userExist = await this.userModel.findOne({ email });
@@ -43,18 +43,18 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    const token = this.authUtilsService.createAccessToken(user);
+    const accessToken = this.authUtilsService.createAccessToken(user);
     const refreshToken = this.authUtilsService.createRefreshToken(user);
 
     user.refreshToken = refreshToken;
     await (user as any).save();
 
-    return { token, refreshToken };
+    return { accessToken, refreshToken };
   }
 
   async login(
     LoginDto: loginDto,
-  ): Promise<{ token: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const { email, password } = LoginDto;
 
     const user = await this.userModel.findOne({ email });
@@ -68,13 +68,13 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const token = this.authUtilsService.createAccessToken(user);
+    const accessToken = this.authUtilsService.createAccessToken(user);
     const refreshToken = this.authUtilsService.createRefreshToken(user);
 
     user.refreshToken = refreshToken;
     await (user as any).save();
 
-    return { token, refreshToken };
+    return { accessToken, refreshToken };
   }
 
   validateToken(token: string): any {
@@ -83,7 +83,7 @@ export class AuthService {
 
   async refreshToken(
     refreshToken: string,
-  ): Promise<{ token: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const payload = this.authUtilsService.verifyRefreshToken(refreshToken);
 
     const user = await this.userModel.findById(payload.id);
@@ -92,12 +92,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid token');
     }
 
-    const newAccessToken = this.authUtilsService.createAccessToken(user);
+    const accessToken = this.authUtilsService.createAccessToken(user);
     const newRefreshToken = this.authUtilsService.createRefreshToken(user);
 
     user.refreshToken = newRefreshToken;
     await (user as any).save();
 
-    return { token: newAccessToken, refreshToken: newRefreshToken };
+    return { accessToken, refreshToken: newRefreshToken };
   }
 }

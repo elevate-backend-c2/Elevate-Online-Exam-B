@@ -10,29 +10,30 @@ import { Public } from './decorators/public.decorator';
   path: 'auth',
   version: '1',
 })
-@Public()
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @Post('/register')
   register(
     @Body() RegisterDto: registerDto,
-  ): Promise<{ token: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     return this.authService.register(RegisterDto);
   }
 
+  @Public()
   @Post('/login')
   login(
     @Body() LoginDto: loginDto,
-  ): Promise<{ token: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     return this.authService.login(LoginDto);
   }
 
   @Public()
-  @Post('/refresh')
+  @Post('/refresh-token')
   refresh(
     @Body() body: { refreshToken: string },
-  ): Promise<{ token: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     return this.authService.refreshToken(body.refreshToken);
   }
 
