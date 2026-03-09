@@ -12,14 +12,26 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/register')
-  register(@Body() RegisterDto: registerDto): Promise<{ token: string }> {
+  register(
+    @Body() RegisterDto: registerDto,
+  ): Promise<{ token: string; refreshToken: string }> {
     return this.authService.register(RegisterDto);
   }
 
   @Public()
   @Post('/login')
-  login(@Body() LoginDto: loginDto): Promise<{ token: string }> {
+  login(
+    @Body() LoginDto: loginDto,
+  ): Promise<{ token: string; refreshToken: string }> {
     return this.authService.login(LoginDto);
+  }
+
+  @Public()
+  @Post('/refresh')
+  refresh(
+    @Body() body: { refreshToken: string },
+  ): Promise<{ token: string; refreshToken: string }> {
+    return this.authService.refreshToken(body.refreshToken);
   }
 
   // @UseGuards(GoogleAuthGuard)

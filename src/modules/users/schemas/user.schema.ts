@@ -18,6 +18,9 @@ export class User {
   @Prop({ enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
+  @Prop()
+  refreshToken?: string;
+
   @Prop({ type: [Types.ObjectId], ref: 'Diploma', default: [] })
   allowedDiplomas: Types.ObjectId[];
 
