@@ -5,9 +5,11 @@ import { loginDto } from './dto/Login.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from './decorators/public.decorator';
 
-@Public()
-@ApiTags('api/v1/auth')
-@Controller('api/v1/auth')
+@ApiTags('auth')
+@Controller({
+  path: 'auth',
+  version: '1',
+})
 export class AuthController {
   constructor(private authService: AuthService) {}
 

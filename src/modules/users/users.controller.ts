@@ -5,9 +5,12 @@ import type { PaginationDto } from './dto/pagination.dto';
 import type { UpdateProfileDto } from './dto/update-profile.dto';
 import { UsersService } from './users.service';
 
-@ApiTags('api/v1/users')
+@ApiTags('users')
 @ApiBearerAuth('access-token')
-@Controller('api/v1/users')
+@Controller({
+  path: 'users',
+  version: '1',
+})
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
