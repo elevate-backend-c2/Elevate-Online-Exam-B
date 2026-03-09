@@ -1,6 +1,3 @@
-/**
- * Shuffle array in place (returns new array).
- */
 export function shuffle<T>(arr: T[]): T[] {
   const out = [...arr];
   for (let i = out.length - 1; i > 0; i--) {
@@ -10,10 +7,6 @@ export function shuffle<T>(arr: T[]): T[] {
   return out;
 }
 
-/**
- * Find (e, m, h) such that e+m+h=N and 1*e+2*m+3*h=P.
- * Returns array of [e, m, h] (easy, medium, hard counts).
- */
 export function findDecompositions(
   N: number,
   P: number,
@@ -29,9 +22,6 @@ export function findDecompositions(
   return out;
 }
 
-/**
- * Compare selected answers vs correct answers (order-independent).
- */
 export function answersMatch(selected: string[], correct: string[]): boolean {
   if (selected.length !== correct.length) return false;
   const a = [...selected].sort();
