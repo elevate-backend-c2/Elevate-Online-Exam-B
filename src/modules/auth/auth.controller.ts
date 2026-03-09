@@ -17,7 +17,7 @@ export class AuthController {
   @Post('/register')
   register(
     @Body() RegisterDto: registerDto,
-  ): Promise<{ token: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     return this.authService.register(RegisterDto);
   }
 
@@ -25,7 +25,7 @@ export class AuthController {
   @Post('/login')
   login(
     @Body() LoginDto: loginDto,
-  ): Promise<{ token: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     return this.authService.login(LoginDto);
   }
 
@@ -33,7 +33,7 @@ export class AuthController {
   @Post('/refresh-token')
   refresh(
     @Body() body: { refreshToken: string },
-  ): Promise<{ token: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     return this.authService.refreshToken(body.refreshToken);
   }
 
