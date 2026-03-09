@@ -13,6 +13,8 @@ import {
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
+import { DiplomaAccessGuard } from './guards/diploma-access.guard';
+import { Quiz, QuizSchema } from '../quizzes/schemas/quiz.schema';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { RolesGuard } from './guards/roles.guard';
     MongooseModule.forFeature([
       { name: 'User', schema: UserSchema },
       { name: PasswordReset.name, schema: PasswordResetSchema },
+      { name: Quiz.name, schema: QuizSchema },
     ]),
   ],
   controllers: [AuthController],
@@ -44,6 +47,7 @@ import { RolesGuard } from './guards/roles.guard';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
+    DiplomaAccessGuard,
   ],
 })
 export class AuthModule {}
