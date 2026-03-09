@@ -9,19 +9,29 @@ import {
   Post,
 } from '@nestjs/common';
 import { ParseObjectIdPipe } from '@nestjs/mongoose';
-import { DiplomasService } from 'src/modules/diplomas/diplomas.service';
-import { CreateDiplomaDto } from 'src/modules/diplomas/dto/create-diploma.dto';
-import { UpdateDiplomaDto } from 'src/modules/diplomas/dto/update-diploma.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { DiplomasService } from './diplomas.service';
+import { CreateDiplomaDto } from './dto/create-diploma.dto';
+import { UpdateDiplomaDto } from './dto/update-diploma.dto';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../auth/enums/user-role.enum';
 
-@Controller('admin/diplomas')
+@ApiTags('diplomas-admin')
+@ApiBearerAuth('access-token')
+@Controller({
+  path: 'admin/diplomas',
+  version: '1',
+})
 export class DiplomasAdminController {
   constructor(private readonly diplomasService: DiplomasService) {}
 
+  @Roles(UserRole.SUPER_ADMIN)
   @Post()
   createDiploma(@Body() dto: CreateDiplomaDto) {
     return this.diplomasService.createDiploma(dto);
   }
 
+  @Roles(UserRole.SUPER_ADMIN)
   @Patch(':id')
   updateDiploma(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -30,6 +40,7 @@ export class DiplomasAdminController {
     return this.diplomasService.updateDiploma(id, dto);
   }
 
+  @Roles(UserRole.SUPER_ADMIN)
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   deleteDiploma(@Param('id', ParseObjectIdPipe) id: string) {

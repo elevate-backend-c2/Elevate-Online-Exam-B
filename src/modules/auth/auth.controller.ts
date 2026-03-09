@@ -10,10 +10,10 @@ import { Public } from './decorators/public.decorator';
   path: 'auth',
   version: '1',
 })
-@Public()
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @Post('/register')
   register(
     @Body() RegisterDto: registerDto,
@@ -21,6 +21,7 @@ export class AuthController {
     return this.authService.register(RegisterDto);
   }
 
+  @Public()
   @Post('/login')
   login(
     @Body() LoginDto: loginDto,
@@ -29,7 +30,7 @@ export class AuthController {
   }
 
   @Public()
-  @Post('/refresh')
+  @Post('/refresh-token')
   refresh(
     @Body() body: { refreshToken: string },
   ): Promise<{ token: string; refreshToken: string }> {
