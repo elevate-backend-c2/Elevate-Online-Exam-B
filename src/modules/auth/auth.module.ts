@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { AuthUtilsService } from './utils/auth-utils.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from '../users/schemas/user.schema';
 import { JwtModule } from '@nestjs/jwt';
@@ -9,6 +10,9 @@ import {
   PasswordReset,
   PasswordResetSchema,
 } from './schemas/password-reset.schema';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './guards/auth.guard';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
@@ -29,6 +33,17 @@ import {
     ]),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [
+    AuthService,
+    AuthUtilsService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AuthModule {}

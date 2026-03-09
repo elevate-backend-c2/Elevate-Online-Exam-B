@@ -1,9 +1,7 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
+import { UserRole } from 'src/modules/auth/enums/user-role.enum';
 
-export enum UserRole {
-  USER = 'user',
-  ADMIN = 'admin',
-}
 @Schema({
   timestamps: true,
 })
@@ -19,6 +17,12 @@ export class User {
 
   @Prop({ enum: UserRole, default: UserRole.USER })
   role: UserRole;
+
+  @Prop()
+  refreshToken?: string;
+
+  @Prop({ type: [Types.ObjectId], ref: 'Diploma', default: [] })
+  allowedDiplomas: Types.ObjectId[];
 
   @Prop({ default: true })
   active: boolean;
@@ -38,5 +42,5 @@ export class User {
   @Prop()
   address: string;
 }
-    
-export const UserSchema = SchemaFactory.createForClass(User)
+
+export const UserSchema = SchemaFactory.createForClass(User);
