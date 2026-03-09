@@ -7,7 +7,6 @@ import { GetDiplomasDto } from './dto/get-diplomas.dto';
 import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('diplomas')
-@ApiBearerAuth('access-token')
 @Controller({
   path: 'diplomas',
   version: '1',
@@ -21,6 +20,7 @@ export class DiplomasController {
     return this.diplomasService.getDiplomas(dto, request);
   }
 
+  @ApiBearerAuth('access-token')
   @Get('enrolled')
   getEnrolledDiplomas(@Query() dto: GetDiplomasDto, @Req() request: Request) {
     return this.diplomasService.getEnrolledDiplomas(dto, request);
@@ -32,6 +32,7 @@ export class DiplomasController {
     return this.diplomasService.getDiplomaById(id);
   }
 
+  @ApiBearerAuth('access-token')
   @Post(':id/enroll')
   enroll(
     @Param('id', ParseObjectIdPipe) id: string,
