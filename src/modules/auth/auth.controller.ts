@@ -10,6 +10,7 @@ import { Public } from './decorators/public.decorator';
   path: 'auth',
   version: '1',
 })
+@Public()
 export class AuthController {
   constructor(private authService: AuthService) {}
 
