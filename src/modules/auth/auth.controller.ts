@@ -5,9 +5,11 @@ import { loginDto } from './dto/Login.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from './decorators/public.decorator';
 
-@Public()
-@ApiTags('api/v1/auth')
-@Controller('api/v1/auth')
+@ApiTags('auth')
+@Controller({
+  path: 'auth',
+  version: '1',
+})
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -18,7 +20,6 @@ export class AuthController {
     return this.authService.register(RegisterDto);
   }
 
-  @Public()
   @Post('/login')
   login(
     @Body() LoginDto: loginDto,
@@ -34,14 +35,4 @@ export class AuthController {
     return this.authService.refreshToken(body.refreshToken);
   }
 
-  // @UseGuards(GoogleAuthGuard)
-  // @Get('/google/login')
-  // googleLogin() {}
-
-  // @UseGuards(GoogleAuthGuard)
-  // @Get('/google/callback')
-  // async googleCallback(@Req() req, @Res() res) {
-  //   const response = await this.authService.googleRegister(req.user);
-  //   res.redirect(`http://localhost:3000?token=${response.token}`); // Redirection for the front
-  // }
 }
