@@ -4,11 +4,13 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserRole } from '../users/schemas/user.schema';
+import { User } from '../users/schemas/user.schema';
+import { UserRole } from '../auth/enums/user-role.enum';
 import { Model } from 'mongoose';
 import { Diploma } from '../diplomas/schemas/diploma.schema';
 import { CreateAdminDto } from './dtos/create-admin.dto';
 import { SuperAdminAuditLog } from './schemas/admins-audit-logs.schema';
+import { AdminSimpleResponse } from './types/admin-responses.type';
 
 @Injectable()
 export class AdminsService {
@@ -19,7 +21,10 @@ export class AdminsService {
     private superAdminAuditLogModel: Model<SuperAdminAuditLog>,
   ) {}
 
-  async createAdmin(dto: CreateAdminDto, superAdmin) {
+  async createAdmin(
+    dto: CreateAdminDto,
+    superAdmin: { id: string },
+  ): Promise<AdminSimpleResponse> {
     const existingAdmin = await this.userModel.findOne({ email: dto.email });
 
     if (existingAdmin) {
@@ -37,7 +42,12 @@ export class AdminsService {
       message: 'Admin created successfully',
     };
   }
-  async updateAdminDiplomas(id: string, allowedDiplomas: string[], superAdmin) {
+
+  async updateAdminDiplomas(
+    id: string,
+    allowedDiplomas: string[],
+    superAdmin: { id: string },
+  ): Promise<AdminSimpleResponse> {
     const admin = await this.userModel.findById(id);
 
     if (!admin) {
@@ -80,7 +90,11 @@ export class AdminsService {
       message: "Admin's diplomas updated successfully",
     };
   }
-  async deactivateAdmin(adminId: string, superAdmin) {
+
+  async deactivateAdmin(
+    adminId: string,
+    superAdmin: { id: string },
+  ): Promise<AdminSimpleResponse> {
     const admin = await this.userModel.findOneAndUpdate(
       { _id: adminId, role: UserRole.ADMIN },
       { active: false },
@@ -103,7 +117,8 @@ export class AdminsService {
       message: 'Admin deactivated successfully',
     };
   }
-  getAuditLogs() {
-    return this.superAdminAuditLogModel.find();
+
+  async getAuditLogs(): Promise<SuperAdminAuditLog[]> {
+    return this.superAdminAuditLogModel.find().exec();
   }
 }

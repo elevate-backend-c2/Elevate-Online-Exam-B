@@ -1,24 +1,38 @@
 import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { AdminsService } from './admins.service';
 import { CreateAdminDto } from './dtos/create-admin.dto';
-import { type Request } from 'express';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../auth/enums/user-role.enum';
+import type { AuthenticatedRequest } from './types/authenticated-request.type';
+import type { AdminSimpleResponse } from './types/admin-responses.type';
+import type { SuperAdminAuditLog } from './schemas/admins-audit-logs.schema';
 
-@ApiTags('super-admin')
-@Controller('admins')
+@ApiTags('admins')
+@ApiBearerAuth('access-token')
+@Controller({
+  path: 'admins',
+  version: '1',
+})
 export class AdminsController {
   constructor(private readonly adminService: AdminsService) {}
+
+  @Roles(UserRole.ADMIN)
   @Post()
-  createAdmin(@Body() dto: CreateAdminDto, @Req() req: Request) {
+  createAdmin(
+    @Body() dto: CreateAdminDto,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<AdminSimpleResponse> {
     return this.adminService.createAdmin(dto, req.user);
   }
 
+  @Roles(UserRole.ADMIN)
   @Patch(':adminId/permissions')
   updateAdminDiplomas(
     @Param('adminId') adminId: string,
     @Body('allowedDiplomas') allowedDiplomas: string[],
-    @Req() req: Request,
-  ) {
+    @Req() req: AuthenticatedRequest,
+  ): Promise<AdminSimpleResponse> {
     return this.adminService.updateAdminDiplomas(
       adminId,
       allowedDiplomas,
@@ -26,13 +40,18 @@ export class AdminsController {
     );
   }
 
+  @Roles(UserRole.ADMIN)
   @Patch(':adminId/deactivate')
-  deactivateAdmin(@Param('adminId') adminId: string, @Req() req: Request) {
+  deactivateAdmin(
+    @Param('adminId') adminId: string,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<AdminSimpleResponse> {
     return this.adminService.deactivateAdmin(adminId, req.user);
   }
 
+  @Roles(UserRole.ADMIN)
   @Get('audit-logs')
-  getSuperAdminAuditLogs() {
+  getSuperAdminAuditLogs(): Promise<SuperAdminAuditLog[]> {
     return this.adminService.getAuditLogs();
   }
 }
