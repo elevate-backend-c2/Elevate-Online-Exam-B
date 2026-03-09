@@ -8,21 +8,18 @@ import { User, UserRole } from '../users/schemas/user.schema';
 import { Model } from 'mongoose';
 import { Diploma } from '../diplomas/schemas/diploma.schema';
 import { CreateAdminDto } from './dtos/create-admin.dto';
-import { CurrentUserType } from './decorators/current-user.decorator';
 import { SuperAdminAuditLog } from './schemas/admins-audit-logs.schema';
 
 @Injectable()
 export class AdminsService {
-  getAuditLogs() {
-    return this.superAdminAuditLogModel.find();
-  }
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Diploma.name) private diplomaModel: Model<Diploma>,
     @InjectModel(SuperAdminAuditLog.name)
     private superAdminAuditLogModel: Model<SuperAdminAuditLog>,
   ) {}
-  async createAdmin(dto: CreateAdminDto, superAdmin: CurrentUserType) {
+
+  async createAdmin(dto: CreateAdminDto, superAdmin) {
     const existingAdmin = await this.userModel.findOne({ email: dto.email });
 
     if (existingAdmin) {
@@ -40,11 +37,7 @@ export class AdminsService {
       message: 'Admin created successfully',
     };
   }
-  async updateAdminDiplomas(
-    id: string,
-    allowedDiplomas: string[],
-    superAdmin: CurrentUserType,
-  ) {
+  async updateAdminDiplomas(id: string, allowedDiplomas: string[], superAdmin) {
     const admin = await this.userModel.findById(id);
 
     if (!admin) {
@@ -87,7 +80,7 @@ export class AdminsService {
       message: "Admin's diplomas updated successfully",
     };
   }
-  async deactivateAdmin(adminId: string, superAdmin: CurrentUserType) {
+  async deactivateAdmin(adminId: string, superAdmin) {
     const admin = await this.userModel.findOneAndUpdate(
       { _id: adminId, role: UserRole.ADMIN },
       { active: false },
@@ -109,5 +102,8 @@ export class AdminsService {
       status: 'success',
       message: 'Admin deactivated successfully',
     };
+  }
+  getAuditLogs() {
+    return this.superAdminAuditLogModel.find();
   }
 }

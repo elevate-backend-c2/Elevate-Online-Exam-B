@@ -1,41 +1,32 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { AdminsService } from './admins.service';
 import { CreateAdminDto } from './dtos/create-admin.dto';
-import {
-  CurrentUser,
-  type CurrentUserType,
-} from './decorators/current-user.decorator';
+import { type Request } from 'express';
 
 @Controller('admins')
 export class AdminsController {
   constructor(private readonly adminService: AdminsService) {}
   @Post()
-  createAdmin(
-    @Body() dto: CreateAdminDto,
-    @CurrentUser() superAdmin: CurrentUserType,
-  ) {
-    return this.adminService.createAdmin(dto, superAdmin);
+  createAdmin(@Body() dto: CreateAdminDto, @Req() req: Request) {
+    return this.adminService.createAdmin(dto, req.user);
   }
 
   @Patch(':adminId/permissions')
   updateAdminDiplomas(
     @Param('adminId') adminId: string,
     @Body('allowedDiplomas') allowedDiplomas: string[],
-    @CurrentUser() superAdmin: CurrentUserType,
+    @Req() req: Request,
   ) {
     return this.adminService.updateAdminDiplomas(
       adminId,
       allowedDiplomas,
-      superAdmin,
+      req.user,
     );
   }
 
   @Patch(':adminId/deactivate')
-  deactivateAdmin(
-    @Param('adminId') adminId: string,
-    @CurrentUser() superAdmin: CurrentUserType,
-  ) {
-    return this.adminService.deactivateAdmin(adminId, superAdmin);
+  deactivateAdmin(@Param('adminId') adminId: string, @Req() req: Request) {
+    return this.adminService.deactivateAdmin(adminId, req.user);
   }
 
   @Get('audit-logs')
