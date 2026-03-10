@@ -1,30 +1,37 @@
-export function shuffle<T>(arr: T[]): T[] {
-  const out = [...arr];
-  for (let i = out.length - 1; i > 0; i--) {
+export function shuffleArray<T>(items: T[]): T[] {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
+    [result[i], result[j]] = [result[j], result[i]];
   }
-  return out;
+  return result;
 }
 
-export function findDecompositions(
-  N: number,
-  P: number,
+export function findQuestionDifficultyDecompositions(
+  totalQuestions: number,
+  totalPoints: number,
 ): [number, number, number][] {
-  const out: [number, number, number][] = [];
-  const diff = P - N; // m + 2h = diff
-  for (let h = 0; h <= N; h++) {
-    const m = diff - 2 * h;
-    if (m < 0) continue;
-    const e = N - m - h;
-    if (e >= 0) out.push([e, m, h]);
+  const decompositions: [number, number, number][] = [];
+  const diff = totalPoints - totalQuestions;
+
+  for (let count = 0; count <= totalQuestions; count++) {
+    const mediumCount = diff - 2 * count;
+    if (mediumCount < 0) continue;
+    const easyCount = totalQuestions - mediumCount - count;
+    if (easyCount >= 0) {
+      decompositions.push([easyCount, mediumCount, count]);
+    }
   }
-  return out;
+
+  return decompositions;
 }
 
-export function answersMatch(selected: string[], correct: string[]): boolean {
-  if (selected.length !== correct.length) return false;
-  const a = [...selected].sort();
-  const b = [...correct].sort();
-  return a.every((v, i) => v === b[i]);
+export function areAnswersEqual(
+  selectedOptions: string[],
+  correctOptions: string[],
+): boolean {
+  if (selectedOptions.length !== correctOptions.length) return false;
+  const sortedSelected = [...selectedOptions].sort();
+  const sortedCorrect = [...correctOptions].sort();
+  return sortedSelected.every((value, index) => value === sortedCorrect[index]);
 }

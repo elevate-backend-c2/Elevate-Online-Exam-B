@@ -14,9 +14,9 @@ import { StartQuizDto } from '../dtos/start-quiz.dto';
 import { SubmitAnswerDto } from '../dtos/submit-answer.dto';
 import { Question } from '../../questions/schemas/question.schema';
 import {
-  answersMatch,
-  findDecompositions,
-  shuffle,
+  areAnswersEqual,
+  findQuestionDifficultyDecompositions,
+  shuffleArray,
 } from '../utils/quiz-attempts.util';
 
 @Injectable()
@@ -41,7 +41,7 @@ export class QuizAttemptsService {
       );
     const N = config.numberOfQuestions;
     const P = config.points;
-    const decompositions = findDecompositions(N, P);
+    const decompositions = findQuestionDifficultyDecompositions(N, P);
     if (decompositions.length === 0)
       throw new BadRequestException(
         'Invalid quiz config: no valid question count decomposition for points',
@@ -55,12 +55,12 @@ export class QuizAttemptsService {
     const by2 = questionsByDiff.filter((q) => q.difficulty === 2);
     const by3 = questionsByDiff.filter((q) => q.difficulty === 3);
 
-    for (const [e, m, h] of shuffle(decompositions)) {
+    for (const [e, m, h] of shuffleArray(decompositions)) {
       if (by1.length >= e && by2.length >= m && by3.length >= h) {
-        const s1 = shuffle(by1).slice(0, e);
-        const s2 = shuffle(by2).slice(0, m);
-        const s3 = shuffle(by3).slice(0, h);
-        const combined = shuffle([...s1, ...s2, ...s3]);
+        const s1 = shuffleArray(by1).slice(0, e);
+        const s2 = shuffleArray(by2).slice(0, m);
+        const s3 = shuffleArray(by3).slice(0, h);
+        const combined = shuffleArray([...s1, ...s2, ...s3]);
         return combined.map((q) => q._id);
       }
     }
@@ -205,7 +205,7 @@ export class QuizAttemptsService {
       totalPossible += q.difficulty;
       const ans = answers.find((a) => a.questionId.toString() === qid.toString());
       if (!ans) continue;
-      const correct = answersMatch(
+      const correct = areAnswersEqual(
         ans.selectedOptions || [],
         q.correctAnswers || [],
       );

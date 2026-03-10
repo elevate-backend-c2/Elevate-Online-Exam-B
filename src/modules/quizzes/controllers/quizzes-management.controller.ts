@@ -65,6 +65,13 @@ export class QuizzesManagementController {
   }
 
   @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
+  @DiplomaAccess({ source: 'quizParam', key: 'id' })
+  @Post(':id/publish')
+  publishQuiz(@Param('id') id: string): Promise<Quiz> {
+    return this.quizzesManagementService.publishQuiz(id);
+  }
+
+  @Roles(UserRole.SUPER_ADMIN, UserRole.ADMIN)
   @Delete(':id')
   deleteQuiz(@Param('id') id: string): Promise<void> {
     return this.quizzesManagementService.deleteQuiz(id);

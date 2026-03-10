@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AttemptsController } from './controllers/attempts.controller';
 import { QuizzesManagementController } from './controllers/quizzes-management.controller';
-import { QuizesController } from './controllers/quizes.controller';
+import { QuizzesController } from './controllers/quizes.controller';
 import { QuizAttemptsService } from './services/quiz-attempts.service';
 import { QuizzesService } from './services/quizzes.service';
 import { QuizzesManagementService } from './services/quizzes-management.service';
@@ -28,7 +28,7 @@ import { TopicsModule } from '../topics/topics.module';
   controllers: [
     AttemptsController,
     QuizzesManagementController,
-    QuizesController,
+    QuizzesController,
   ],
   providers: [
     QuizAttemptsService,
