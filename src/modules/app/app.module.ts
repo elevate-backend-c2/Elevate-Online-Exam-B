@@ -4,6 +4,13 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { envValidationSchema } from './config/env.validation';
+import { AuthModule } from '../auth/auth.module';
+import { AdminsModule } from '../admins/admins.module';
+import { UsersModule } from '../users/users.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { DiplomasModule } from 'src/modules/diplomas/diplomas.module';
+import { TopicsModule } from '../topics/topics.module';
 
 const envFilePath =
   process.env.NODE_ENV === 'production'
@@ -14,6 +21,10 @@ const envFilePath =
 
 @Module({
   imports: [
+    AuthModule,
+    AdminsModule,
+    UsersModule,
+    TopicsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath,
@@ -25,8 +36,21 @@ const envFilePath =
       }),
       inject: [ConfigService],
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
+    DiplomasModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

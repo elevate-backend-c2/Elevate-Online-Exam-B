@@ -1,0 +1,31 @@
+---
+description: Core backend conventions for exam-backend
+alwaysApply: true
+---
+
+# Project Conventions
+
+## Environment Variables
+
+- Keep `config/.example.env` up to date with **all** required environment variables.
+- Include, at minimum:
+  - `NODE_ENV`, `PORT`, `MONGO_URI`
+  - `JWT_SECRET`, `JWT_EXPIRES_IN`, `JWT_EXPIRES`, `REFRESH_JWT_EXPIRES`
+  - `BCRYPT_SALT_ROUNDS`
+  - `SUPER_ADMIN_NAME`, `SUPER_ADMIN_EMAIL`, `SUPER_ADMIN_PASSWORD`
+
+## Types, Interfaces, and DTOs
+
+- Do **not** declare shared interfaces, types, or complex shapes inline inside controllers or services.
+- Place them in dedicated files under a `types` or `dto` directory for the module, for example:
+  - `src/modules/admins/types/*.ts`
+  - `src/modules/users/dto/*.ts`
+- Controllers should import these types instead of defining them locally.
+
+## Auth & Guards Conventions
+
+- Roles must come from `src/modules/auth/enums/user-role.enum.ts` (never from schemas).
+- Use:
+  - `@Public()` for open routes.
+  - `@Roles(...)` for role-protected routes, relying on the global `AuthGuard` and `RolesGuard`.
+
