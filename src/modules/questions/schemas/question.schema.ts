@@ -1,13 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { QuestionType } from '../enums/question-type.enum';
 
 export type QuestionDocument = HydratedDocument<Question>;
-
-export enum QuestionType {
-  SINGLE_CHOICE = 'single_choice',
-  MULTIPLE_CHOICE = 'multiple_choice',
-  TRUE_FALSE = 'true_false',
-}
 
 @Schema({
   timestamps: true,
@@ -31,11 +26,11 @@ export class Question {
   @Prop()
   explanation?: string;
 
-  @Prop({ default: 1 })
-  order: number;
+  @Prop({ type: Number, enum: [1, 2, 3], default: 1 })
+  difficulty: number;
 
-  @Prop({ default: 1 })
-  points: number;
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  createdBy: Types.ObjectId;
 }
 
 export const QuestionSchema = SchemaFactory.createForClass(Question);

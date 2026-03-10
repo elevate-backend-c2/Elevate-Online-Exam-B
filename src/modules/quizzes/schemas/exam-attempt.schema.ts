@@ -1,14 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { AttemptAnswerSchema } from './attempt-answer.schema';
+import type { AttemptAnswerEntry } from '../types/attempt-answer-entry.type';
+import { ExamAttemptStatus } from '../enums/exam-attempt-status.enum';
 
 export type ExamAttemptDocument = HydratedDocument<ExamAttempt>;
-
-export enum ExamAttemptStatus {
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  PASSED = 'passed',
-  FAILED = 'failed',
-}
 
 @Schema({
   timestamps: true,
@@ -34,6 +30,9 @@ export class ExamAttempt {
 
   @Prop()
   durationSeconds?: number;
+
+  @Prop({ type: [AttemptAnswerSchema], default: [] })
+  answers: AttemptAnswerEntry[];
 }
 
 export const ExamAttemptSchema = SchemaFactory.createForClass(ExamAttempt);

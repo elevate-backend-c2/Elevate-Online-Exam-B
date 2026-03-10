@@ -36,5 +36,4 @@ export class AuthController {
   ): Promise<{ accessToken: string; refreshToken: string }> {
     return this.authService.refreshToken(body.refreshToken);
   }
-
 }
