@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { QuizAttemptsService } from '../services/quiz-attempts.service';
 import { SubmitAnswerDto } from '../dtos/submit-answer.dto';
@@ -19,19 +12,12 @@ import { SubmitAnswerDto } from '../dtos/submit-answer.dto';
 export class AttemptsController {
   constructor(private readonly quizAttemptsService: QuizAttemptsService) {}
 
-  @Get(':attemptId/next')
-  getNextQuestion(
-    @Param('attemptId') attemptId: string,
-  ) {
-    return this.quizAttemptsService.getNextQuestion(attemptId);
-  }
-
-  @Patch(':attemptId/answer')
-  submitAnswer(
+  @Patch(':attemptId/next')
+  goToNextQuestion(
     @Param('attemptId') attemptId: string,
     @Body() dto: SubmitAnswerDto,
   ) {
-    return this.quizAttemptsService.submitAnswer(attemptId, dto);
+    return this.quizAttemptsService.submitCurrentAndGetNext(attemptId, dto);
   }
 
   @Post(':attemptId/submit')

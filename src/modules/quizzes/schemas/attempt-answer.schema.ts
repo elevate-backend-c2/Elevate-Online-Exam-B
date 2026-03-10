@@ -1,27 +1,22 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
-
-export type AttemptAnswerDocument = HydratedDocument<AttemptAnswer>;
+import { Types } from 'mongoose';
 
 @Schema({
-  timestamps: true,
+  _id: false,
 })
-export class AttemptAnswer {
-  @Prop({ type: Types.ObjectId, ref: 'ExamAttempt', required: true })
-  attemptId: Types.ObjectId;
-
+export class AttemptAnswerSubdocument {
   @Prop({ type: Types.ObjectId, ref: 'Question', required: true })
   questionId: Types.ObjectId;
 
   @Prop({ type: [String], default: [] })
   selectedOptions: string[];
 
-  @Prop({ default: false })
+  @Prop({ type: Boolean, default: false })
   isCorrect: boolean;
 
-  @Prop({ default: 0 })
+  @Prop({ type: Number, default: 0 })
   pointsAwarded: number;
 }
 
-export const AttemptAnswerSchema = SchemaFactory.createForClass(AttemptAnswer);
-
+export const AttemptAnswerSchema =
+  SchemaFactory.createForClass(AttemptAnswerSubdocument);

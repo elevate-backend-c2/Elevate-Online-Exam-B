@@ -6,10 +6,8 @@ import { QuizzesController } from './controllers/quizes.controller';
 import { QuizAttemptsService } from './services/quiz-attempts.service';
 import { QuizzesService } from './services/quizzes.service';
 import { QuizzesManagementService } from './services/quizzes-management.service';
-import {
-  AttemptAnswer,
-  AttemptAnswerSchema,
-} from './schemas/attempt-answer.schema';
+import { QuizAttemptsUtilService } from './services/quiz-attempts-util.service';
+import { AttemptAnswerSchema } from './schemas/attempt-answer.schema';
 import { ExamAttempt, ExamAttemptSchema } from './schemas/exam-attempt.schema';
 import { Quiz, QuizSchema } from './schemas/quiz.schema';
 import { QuestionsModule } from '../questions/questions.module';
@@ -22,7 +20,6 @@ import { TopicsModule } from '../topics/topics.module';
     MongooseModule.forFeature([
       { name: Quiz.name, schema: QuizSchema },
       { name: ExamAttempt.name, schema: ExamAttemptSchema },
-      { name: AttemptAnswer.name, schema: AttemptAnswerSchema },
     ]),
   ],
   controllers: [
@@ -34,6 +31,7 @@ import { TopicsModule } from '../topics/topics.module';
     QuizAttemptsService,
     QuizzesService,
     QuizzesManagementService,
+    QuizAttemptsUtilService,
   ],
   exports: [MongooseModule],
 })

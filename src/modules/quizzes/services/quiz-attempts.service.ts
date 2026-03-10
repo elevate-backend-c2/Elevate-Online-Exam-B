@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { AttemptAnswer } from '../schemas/attempt-answer.schema';
 import { ExamAttempt } from '../schemas/exam-attempt.schema';
 import { Quiz } from '../schemas/quiz.schema';
 import { QuizDifficulty } from '../enums/quiz-difficulty.enum';
@@ -13,59 +12,27 @@ import { ExamAttemptStatus } from '../enums/exam-attempt-status.enum';
 import { StartQuizDto } from '../dtos/start-quiz.dto';
 import { SubmitAnswerDto } from '../dtos/submit-answer.dto';
 import { Question } from '../../questions/schemas/question.schema';
-import {
-  areAnswersEqual,
-  findQuestionDifficultyDecompositions,
-  shuffleArray,
-} from '../utils/quiz-attempts.util';
+import type { AttemptAnswerEntry } from '../types/attempt-answer-entry.type';
+import type { AttemptReviewQuestion } from '../types/attempt-review-question.type';
+import { areAnswersEqual } from '../utils/quiz-attempts.util';
+import { QuizAttemptsUtilService } from './quiz-attempts-util.service';
 
 @Injectable()
 export class QuizAttemptsService {
   constructor(
     @InjectModel(Quiz.name) private quizModel: Model<Quiz>,
     @InjectModel(ExamAttempt.name) private attemptModel: Model<ExamAttempt>,
-    @InjectModel(AttemptAnswer.name) private attemptAnswerModel: Model<AttemptAnswer>,
     @InjectModel(Question.name) private questionModel: Model<Question>,
+    private readonly quizAttemptsUtilService: QuizAttemptsUtilService,
   ) {}
 
-  async buildRandomQuestionIds(quizId: string, difficulty: QuizDifficulty): Promise<Types.ObjectId[]> {
-    const quiz = await this.quizModel.findById(quizId).lean().exec();
-    if (!quiz) throw new NotFoundException('Quiz not found');
-    if (!quiz.isPublished) throw new BadRequestException('Quiz is not published');
-    const config = quiz.allowedQuizDifficulties?.find(
-      (c) => c.difficulty === difficulty,
-    );
-    if (!config)
-      throw new BadRequestException(
-        `Difficulty ${difficulty} is not configured for this quiz`,
-      );
-    const N = config.numberOfQuestions;
-    const P = config.points;
-    const decompositions = findQuestionDifficultyDecompositions(N, P);
-    if (decompositions.length === 0)
-      throw new BadRequestException(
-        'Invalid quiz config: no valid question count decomposition for points',
-      );
-
-    const questionsByDiff = await this.questionModel
-      .find({ quizId: new Types.ObjectId(quizId) })
-      .lean()
-      .exec();
-    const by1 = questionsByDiff.filter((q) => q.difficulty === 1);
-    const by2 = questionsByDiff.filter((q) => q.difficulty === 2);
-    const by3 = questionsByDiff.filter((q) => q.difficulty === 3);
-
-    for (const [e, m, h] of shuffleArray(decompositions)) {
-      if (by1.length >= e && by2.length >= m && by3.length >= h) {
-        const s1 = shuffleArray(by1).slice(0, e);
-        const s2 = shuffleArray(by2).slice(0, m);
-        const s3 = shuffleArray(by3).slice(0, h);
-        const combined = shuffleArray([...s1, ...s2, ...s3]);
-        return combined.map((q) => q._id);
-      }
-    }
-    throw new BadRequestException(
-      'Not enough questions in the quiz pool for the selected difficulty',
+  private async buildRandomQuestionIds(
+    quizId: string,
+    difficulty: QuizDifficulty,
+  ): Promise<Types.ObjectId[]> {
+    return this.quizAttemptsUtilService.buildRandomQuestionIds(
+      quizId,
+      difficulty,
     );
   }
 
@@ -76,7 +43,10 @@ export class QuizAttemptsService {
     attempt: ExamAttempt & { id: string };
     firstQuestion: Partial<Question> & { id: string };
   }> {
-    const questionIds = await this.buildRandomQuestionIds(quizId, dto.difficulty);
+    const questionIdsForAttempt = await this.buildRandomQuestionIds(
+      quizId,
+      dto.difficulty,
+    );
     const startedAt = new Date();
     const attempt = await this.attemptModel.create({
       quizId: new Types.ObjectId(quizId),
@@ -84,68 +54,70 @@ export class QuizAttemptsService {
       status: ExamAttemptStatus.IN_PROGRESS,
       score: 0,
       startedAt,
-      questionIds,
-    });
-    for (const qid of questionIds) {
-      await this.attemptAnswerModel.create({
-        attemptId: attempt._id,
-        questionId: qid,
+      answers: questionIdsForAttempt.map((questionId) => ({
+        questionId,
         selectedOptions: [],
         isCorrect: false,
         pointsAwarded: 0,
-      });
-    }
-    const firstId = questionIds[0];
-    const firstQuestionDoc = await this.questionModel
-      .findById(firstId)
+      })),
+    });
+    const firstQuestionId = questionIdsForAttempt[0];
+    const firstQuestion = await this.questionModel
+      .findById(firstQuestionId)
       .select('-correctAnswers -explanation')
       .lean()
       .exec();
-    if (!firstQuestionDoc)
-      throw new NotFoundException('First question not found');
-    const attemptObj = attempt.toObject ? attempt.toObject() : attempt;
+    if (!firstQuestion) throw new NotFoundException('First question not found');
+    const attemptAny = attempt as any;
+    const attemptObject = attemptAny.toObject
+      ? (attemptAny.toObject() as ExamAttempt)
+      : (attempt as unknown as ExamAttempt);
     return {
       attempt: {
-        ...attemptObj,
-        id: (attemptObj as any)._id?.toString(),
-      } as ExamAttempt & { id: string },
+        ...attemptObject,
+        id: attemptAny._id?.toString(),
+      },
       firstQuestion: {
-        ...firstQuestionDoc,
-        id: (firstQuestionDoc as any)._id?.toString(),
+        ...firstQuestion,
+        id: (firstQuestion as any)._id?.toString(),
       } as Partial<Question> & { id: string },
     };
   }
 
   async getNextQuestion(
     attemptId: string,
-  ): Promise<{ hasMore: boolean; question?: Partial<Question> & { id: string } }> {
+  ): Promise<{
+    hasMore: boolean;
+    question?: Partial<Question> & { id: string };
+  }> {
     const attempt = await this.attemptModel.findById(attemptId).lean().exec();
     if (!attempt) throw new NotFoundException('Attempt not found');
     if (attempt.status !== ExamAttemptStatus.IN_PROGRESS)
       throw new BadRequestException('Attempt is not in progress');
-    const questionIds = attempt.questionIds || [];
-    const answers = await this.attemptAnswerModel
-      .find({ attemptId: new Types.ObjectId(attemptId) })
-      .lean()
-      .exec();
-    const answerByQ = new Map(
-      answers.map((a) => [a.questionId.toString(), a]),
+    const attemptAnswers = (attempt as any).answers as AttemptAnswerEntry[];
+    const answersByQuestionId = new Map(
+      attemptAnswers.map((answer) => [answer.questionId.toString(), answer]),
     );
-    for (const qid of questionIds) {
-      const key = qid.toString();
-      const ans = answerByQ.get(key);
-      if (!ans || !ans.selectedOptions || ans.selectedOptions.length === 0) {
-        const q = await this.questionModel
-          .findById(qid)
+    const questionIdsInOrder = attemptAnswers.map((entry) => entry.questionId);
+    for (const questionId of questionIdsInOrder) {
+      const key = questionId.toString();
+      const answer = answersByQuestionId.get(key);
+      if (
+        !answer ||
+        !answer.selectedOptions ||
+        answer.selectedOptions.length === 0
+      ) {
+        const question = await this.questionModel
+          .findById(questionId)
           .select('-correctAnswers -explanation')
           .lean()
           .exec();
-        if (!q) continue;
+        if (!question) continue;
         return {
           hasMore: true,
           question: {
-            ...q,
-            id: (q as any)._id?.toString(),
+            ...question,
+            id: (question as any)._id?.toString(),
           } as Partial<Question> & { id: string },
         };
       }
@@ -153,32 +125,89 @@ export class QuizAttemptsService {
     return { hasMore: false };
   }
 
-  async submitAnswer(
+  async submitCurrentAndGetNext(
     attemptId: string,
     dto: SubmitAnswerDto,
-  ): Promise<AttemptAnswer> {
-    const attempt = await this.attemptModel.findById(attemptId).exec();
+  ): Promise<{
+    hasMore: boolean;
+    question?: Partial<Question> & { id: string };
+  }> {
+    const attempt = await this.attemptModel
+      .findById(attemptId)
+      .populate('quizId')
+      .exec();
     if (!attempt) throw new NotFoundException('Attempt not found');
     if (attempt.status !== ExamAttemptStatus.IN_PROGRESS)
       throw new BadRequestException('Attempt is not in progress');
-    const updated = await this.attemptAnswerModel
-      .findOneAndUpdate(
-        {
-          attemptId: new Types.ObjectId(attemptId),
-          questionId: new Types.ObjectId(dto.questionId),
-        },
-        { $set: { selectedOptions: dto.selectedOptions } },
-        { new: true },
-      )
+
+    const quizDoc = attempt.quizId as unknown as Quiz;
+    const quizDurationMinutes = quizDoc.durationMinutes;
+    const now = new Date();
+    if (
+      attempt.startedAt &&
+      now.getTime() - attempt.startedAt.getTime() >
+        quizDurationMinutes * 60 * 1000
+    ) {
+      // time is over: finalize attempt
+      await this.submitQuiz(attemptId);
+      throw new BadRequestException('Time is over for this attempt');
+    }
+
+    // save current answer (if any)
+    if (dto?.questionId) {
+      const answers = ((attempt as any).answers ||
+        []) as AttemptAnswerEntry[];
+      const entry = answers.find(
+        (a) => a.questionId.toString() === dto.questionId,
+      );
+      if (!entry) {
+        throw new NotFoundException('Attempt answer not found');
+      }
+      entry.selectedOptions = dto.selectedOptions;
+      await attempt.save();
+    }
+
+    // then return next unanswered question
+    const leanAttempt = await this.attemptModel
+      .findById(attemptId)
       .lean()
       .exec();
-    if (!updated) throw new NotFoundException('Attempt answer not found');
-    return updated as AttemptAnswer;
+    if (!leanAttempt) throw new NotFoundException('Attempt not found');
+    if (leanAttempt.status !== ExamAttemptStatus.IN_PROGRESS)
+      throw new BadRequestException('Attempt is not in progress');
+    const attemptAnswers = (leanAttempt as any)
+      .answers as AttemptAnswerEntry[];
+    const answersByQuestionId = new Map(
+      attemptAnswers.map((answer) => [answer.questionId.toString(), answer]),
+    );
+    const questionIdsInOrder = attemptAnswers.map((entry) => entry.questionId);
+    for (const questionId of questionIdsInOrder) {
+      const key = questionId.toString();
+      const answer = answersByQuestionId.get(key);
+      if (
+        !answer ||
+        !answer.selectedOptions ||
+        answer.selectedOptions.length === 0
+      ) {
+        const question = await this.questionModel
+          .findById(questionId)
+          .select('-correctAnswers -explanation')
+          .lean()
+          .exec();
+        if (!question) continue;
+        return {
+          hasMore: true,
+          question: {
+            ...question,
+            id: (question as any)._id?.toString(),
+          } as Partial<Question> & { id: string },
+        };
+      }
+    }
+    return { hasMore: false };
   }
 
-  async submitQuiz(
-    attemptId: string,
-  ): Promise<{
+  async submitQuiz(attemptId: string): Promise<{
     attempt: ExamAttempt & { id: string; totalPossible?: number };
     passed: boolean;
     passPercentage: number;
@@ -192,35 +221,31 @@ export class QuizAttemptsService {
     if (!quiz) throw new NotFoundException('Quiz not found');
     const passPercentage = quiz.passPercentage;
 
-    const answers = await this.attemptAnswerModel
-      .find({ attemptId: new Types.ObjectId(attemptId) })
-      .lean()
-      .exec();
-    const questionIds = attempt.questionIds || [];
+    const attemptAnswers = (((attempt as any).answers ||
+      []) as AttemptAnswerEntry[]);
+    const questionIdList = attemptAnswers.map((entry) => entry.questionId);
     let totalPossible = 0;
     let score = 0;
-    for (const qid of questionIds) {
-      const q = await this.questionModel.findById(qid).lean().exec();
-      if (!q) continue;
-      totalPossible += q.difficulty;
-      const ans = answers.find((a) => a.questionId.toString() === qid.toString());
-      if (!ans) continue;
-      const correct = areAnswersEqual(
-        ans.selectedOptions || [],
-        q.correctAnswers || [],
-      );
-      await this.attemptAnswerModel
-        .updateOne(
-          { _id: ans._id },
-          {
-            $set: {
-              isCorrect: correct,
-              pointsAwarded: correct ? q.difficulty : 0,
-            },
-          },
-        )
+    for (const questionId of questionIdList) {
+      const question = await this.questionModel
+        .findById(questionId)
+        .lean()
         .exec();
-      if (correct) score += q.difficulty;
+      if (!question) continue;
+      totalPossible++;
+      const answer = attemptAnswers.find(
+        (a) => a.questionId.toString() === questionId.toString(),
+      );
+      if (!answer) continue;
+      const correct = areAnswersEqual(
+        answer.selectedOptions || [],
+        question.correctAnswers || [],
+      );
+      if (answer) {
+        answer.isCorrect = correct;
+        answer.pointsAwarded = correct ? 1 : 0;
+      }
+      if (correct) score += 1;
     }
 
     const completedAt = new Date();
@@ -229,29 +254,20 @@ export class QuizAttemptsService {
       : 0;
     const percent = totalPossible > 0 ? (score / totalPossible) * 100 : 0;
     const passed = percent >= passPercentage;
-    await this.attemptModel
-      .updateOne(
-        { _id: attemptId },
-        {
-          $set: {
-            score,
-            status: passed ? ExamAttemptStatus.PASSED : ExamAttemptStatus.FAILED,
-            completedAt,
-            durationSeconds,
-          },
-        },
-      )
-      .exec();
-
-    const updatedAttempt = await this.attemptModel
-      .findById(attemptId)
-      .lean()
-      .exec();
-    const out = updatedAttempt as any;
+    attempt.score = score;
+    attempt.status = passed
+      ? ExamAttemptStatus.PASSED
+      : ExamAttemptStatus.FAILED;
+    attempt.completedAt = completedAt;
+    attempt.durationSeconds = durationSeconds;
+    const updatedAttempt = await attempt.save();
+    const out = updatedAttempt.toObject() as ExamAttempt & {
+      _id?: Types.ObjectId | string;
+    };
     return {
       attempt: {
         ...out,
-        id: out?._id?.toString(),
+        id: out._id ? out._id.toString() : '',
         totalPossible,
       },
       passed,
@@ -261,51 +277,48 @@ export class QuizAttemptsService {
 
   async getReview(attemptId: string): Promise<{
     attempt: ExamAttempt & { id: string };
-    questions: Array<{
-      question: { text: string; options: string[]; correctAnswers: string[]; explanation?: string };
-      selectedOptions: string[];
-      isCorrect: boolean;
-      pointsAwarded: number;
-    }>;
+    questions: AttemptReviewQuestion[];
   }> {
     const attempt = await this.attemptModel.findById(attemptId).lean().exec();
     if (!attempt) throw new NotFoundException('Attempt not found');
     if (attempt.status === ExamAttemptStatus.IN_PROGRESS)
       throw new BadRequestException('Attempt not yet submitted');
 
-    const questionIds = attempt.questionIds || [];
-    const answers = await this.attemptAnswerModel
-      .find({ attemptId: new Types.ObjectId(attemptId) })
-      .lean()
-      .exec();
-    const answerByQ = new Map(
-      answers.map((a) => [a.questionId.toString(), a]),
+    const attemptAnswers = (((attempt as any).answers ||
+      []) as AttemptAnswerEntry[]);
+    const answersByQuestionId = new Map(
+      attemptAnswers.map((answer) => [
+        answer.questionId.toString(),
+        answer,
+      ]),
     );
-    const questions: Array<{
-      question: { text: string; options: string[]; correctAnswers: string[]; explanation?: string };
-      selectedOptions: string[];
-      isCorrect: boolean;
-      pointsAwarded: number;
-    }> = [];
-    for (const qid of questionIds) {
-      const q = await this.questionModel.findById(qid).lean().exec();
-      if (!q) continue;
-      const ans = answerByQ.get(qid.toString());
+    const questions: AttemptReviewQuestion[] = [];
+    const questionIdList = attemptAnswers.map((entry) => entry.questionId);
+    for (const questionId of questionIdList) {
+      const question = await this.questionModel
+        .findById(questionId)
+        .lean()
+        .exec();
+      if (!question) continue;
+      const answer = answersByQuestionId.get(questionId.toString());
       questions.push({
         question: {
-          text: q.text,
-          options: q.options || [],
-          correctAnswers: q.correctAnswers || [],
-          explanation: q.explanation,
+          text: question.text,
+          options: question.options || [],
+          correctAnswers: question.correctAnswers || [],
+          explanation: question.explanation,
         },
-        selectedOptions: ans?.selectedOptions || [],
-        isCorrect: ans?.isCorrect ?? false,
-        pointsAwarded: ans?.pointsAwarded ?? 0,
+        selectedOptions: answer?.selectedOptions || [],
+        isCorrect: answer?.isCorrect ?? false,
+        pointsAwarded: answer?.pointsAwarded ?? 0,
       });
     }
     const outAttempt = attempt as any;
     return {
-      attempt: { ...outAttempt, id: outAttempt._id?.toString() } as ExamAttempt & { id: string },
+      attempt: {
+        ...outAttempt,
+        id: outAttempt._id?.toString(),
+      } as ExamAttempt & { id: string },
       questions,
     };
   }

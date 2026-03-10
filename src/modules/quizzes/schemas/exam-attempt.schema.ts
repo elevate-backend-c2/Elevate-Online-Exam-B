@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { AttemptAnswerSchema } from './attempt-answer.schema';
+import type { AttemptAnswerEntry } from '../types/attempt-answer-entry.type';
 import { ExamAttemptStatus } from '../enums/exam-attempt-status.enum';
 
 export type ExamAttemptDocument = HydratedDocument<ExamAttempt>;
@@ -29,8 +31,8 @@ export class ExamAttempt {
   @Prop()
   durationSeconds?: number;
 
-  @Prop({ type: [Types.ObjectId], ref: 'Question', default: [] })
-  questionIds: Types.ObjectId[];
+  @Prop({ type: [AttemptAnswerSchema], default: [] })
+  answers: AttemptAnswerEntry[];
 }
 
 export const ExamAttemptSchema = SchemaFactory.createForClass(ExamAttempt);
