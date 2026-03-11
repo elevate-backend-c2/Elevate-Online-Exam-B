@@ -7,16 +7,17 @@ import { QuizAttemptsService } from './services/quiz-attempts.service';
 import { QuizzesService } from './services/quizzes.service';
 import { QuizzesManagementService } from './services/quizzes-management.service';
 import { QuizAttemptsUtilService } from './services/quiz-attempts-util.service';
-import { AttemptAnswerSchema } from './schemas/attempt-answer.schema';
 import { ExamAttempt, ExamAttemptSchema } from './schemas/exam-attempt.schema';
 import { Quiz, QuizSchema } from './schemas/quiz.schema';
 import { QuestionsModule } from '../questions/questions.module';
 import { TopicsModule } from '../topics/topics.module';
+import { CertificatesModule } from '../certificates/certificates.module';
 
 @Module({
   imports: [
     QuestionsModule,
     TopicsModule,
+    CertificatesModule,
     MongooseModule.forFeature([
       { name: Quiz.name, schema: QuizSchema },
       { name: ExamAttempt.name, schema: ExamAttemptSchema },

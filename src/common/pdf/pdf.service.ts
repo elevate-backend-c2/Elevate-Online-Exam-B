@@ -50,7 +50,11 @@ export class PdfService {
       .replace(/\{\{studentName\}\}/g, data.studentName)
       .replace(/\{\{courseName\}\}/g, data.courseName)
       .replace(/\{\{date\}\}/g, data.date)
-      .replace(/\{\{certificateId\}\}/g, data.certificateId);
+      .replace(/\{\{certificateId\}\}/g, data.certificateId)
+      .replace(
+        /\{\{certificateQrUrl\}\}/g,
+        data.certificateQrUrl ?? '',
+      );
 
     return this.generatePdf(html);
   }

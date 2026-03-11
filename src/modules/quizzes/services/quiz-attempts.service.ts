@@ -16,6 +16,7 @@ import type { AttemptAnswerEntry } from '../types/attempt-answer-entry.type';
 import type { AttemptReviewQuestion } from '../types/attempt-review-question.type';
 import { areAnswersEqual } from '../utils/quiz-attempts.util';
 import { QuizAttemptsUtilService } from './quiz-attempts-util.service';
+import { CertificatesService } from '../../certificates/certificates.service';
 
 @Injectable()
 export class QuizAttemptsService {
@@ -24,6 +25,7 @@ export class QuizAttemptsService {
     @InjectModel(ExamAttempt.name) private attemptModel: Model<ExamAttempt>,
     @InjectModel(Question.name) private questionModel: Model<Question>,
     private readonly quizAttemptsUtilService: QuizAttemptsUtilService,
+    private readonly certificatesService: CertificatesService,
   ) {}
 
   private async buildRandomQuestionIds(
@@ -211,6 +213,11 @@ export class QuizAttemptsService {
     attempt: ExamAttempt & { id: string; totalPossible?: number };
     passed: boolean;
     passPercentage: number;
+    certificate?: {
+      id: string;
+      code: string;
+      pdfBase64: string;
+    };
   }> {
     const attempt = await this.attemptModel.findById(attemptId).exec();
     if (!attempt) throw new NotFoundException('Attempt not found');
@@ -264,6 +271,28 @@ export class QuizAttemptsService {
     const out = updatedAttempt.toObject() as ExamAttempt & {
       _id?: Types.ObjectId | string;
     };
+
+    let certificate:
+      | {
+          id: string;
+          code: string;
+          pdfBase64: string;
+        }
+      | undefined;
+
+    if (passed) {
+      const { certificate: cert, pdfBase64 } =
+        await this.certificatesService.issueCertificateForQuizAttempt(
+          updatedAttempt.userId as Types.ObjectId,
+          updatedAttempt.quizId as Types.ObjectId,
+          completedAt,
+        );
+      certificate = {
+        id: (cert as any).id,
+        code: cert.certificateCode,
+        pdfBase64,
+      };
+    }
     return {
       attempt: {
         ...out,
@@ -272,6 +301,7 @@ export class QuizAttemptsService {
       },
       passed,
       passPercentage,
+      certificate,
     };
   }
 

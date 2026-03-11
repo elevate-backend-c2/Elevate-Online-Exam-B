@@ -10,6 +10,8 @@ import { UsersModule } from '../users/users.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { DiplomasModule } from 'src/modules/diplomas/diplomas.module';
+import { QuizzesModule } from '../quizzes/quizzes.module';
+import { CertificatesModule } from '../certificates/certificates.module';
 import { TopicsModule } from '../topics/topics.module';
 
 const envFilePath =
@@ -43,6 +45,8 @@ const envFilePath =
       },
     ]),
     DiplomasModule,
+    QuizzesModule,
+    CertificatesModule,
   ],
   controllers: [AppController],
   providers: [

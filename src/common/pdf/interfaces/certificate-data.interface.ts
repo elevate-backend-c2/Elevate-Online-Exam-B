@@ -3,4 +3,5 @@ export interface CertificateData {
   courseName: string;
   date: string;
   certificateId: string;
+  certificateQrUrl?: string;
 }
